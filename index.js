@@ -6,7 +6,7 @@ const loadPrefixes = require('./src/util/loadPrefixes');
 const cache = require('./src/cache');
 const image = require('./src/image');
 
-const prefixes = loadPrefixes(process.env.PREFIXES, ['@mention', 'card!', 'chest!', 'Card!', 'Chest!']);
+const prefixes = loadPrefixes(process.env.PREFIXES, ['@mention', 'card!', 'chest!', 'Card!', 'Chest!', 'c!', 'C!']);
 
 const token = process.env.TOKEN;
 const config = new Configstore('robot-98');
