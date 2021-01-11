@@ -21,7 +21,8 @@ function buildStatus(card) {
   if (card.paralyzed) stats.push('paralyzed');
   if (card.candy) stats.push('candy');
   if (card.kr) stats.push('poison');
-  if (card.armor) stats.push(text('armor', card.armor)); // card.armor
+  if (card.armor === true) stats.push('armor');
+  else if (card.armor) stats.push(text('armor', card.armor));
   if (card.dodge) stats.push(text('dodge', card.dodge));
   if (card.burn) stats.push(text('burn', card.burn));
   if (card.cantAttack) stats.push('cantAttack');
