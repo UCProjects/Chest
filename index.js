@@ -70,6 +70,13 @@ function processCommand(msg, {
     case 'card':
     case 'find':
     case 'lookup': return lookup(msg, args.join(' '));
+    // TODO: help command
+    case 'link':
+    case 'invite': return !process.env.INVITE ? '' : {
+      embed: {
+        description: `[Add me to your server!](${process.env.INVITE})`,
+      }
+     };
   }
   return Promise.resolve();
 }
