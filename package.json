@@ -1,0 +1,22 @@
+{
+  "name": "98",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "banana-i18n": "^2.0.0",
+    "configstore": "^5.0.1",
+    "dotenv": "^8.2.0",
+    "eris": "^0.14.0",
+    "node-html-to-image": "^3.1.0"
+  }
+}
