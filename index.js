@@ -9,7 +9,7 @@ const image = require('./src/image');
 const prefixes = loadPrefixes(process.env.PREFIXES, ['@mention', 'card!', 'chest!', 'Card!', 'Chest!']);
 
 const token = process.env.TOKEN;
-const config = new Configstore('config.json');
+const config = new Configstore('robot-98');
 
 const connection = new Discord.Client(token);
 
@@ -81,12 +81,19 @@ function list(msg, flags = {}, type) {
     config.delete(path);
     return `Cleared ${type}`;
   } else if (flags.add) {
-    const value = config.get(path) || {};
-    value[msg.channel.id] = true;
-    config.set(path, value);
+    config.set(`${path}.${msg.channel.id}`, true);
     return `Added channel to ${type}`;
+  } else if (flags.remove) {
+    config.delete(`${path}.${msg.channel.id}`);
+    return `Removed channel from ${type}`;
   } else if (config.has(path)) {
-    return `Current ${type}: ${Object.keys(config.get(path)).map(id => connection.getChannel(id).mention).join(', ')}`;
+    return `Current ${type}: ${Object.keys(config.get(path)).map(id => {
+      const channel = connection.getChannel(id);
+      if (channel) return channel.mention;
+      // Channel no longer exists - remove from memory
+      config.delete(`${page}.${id}`);
+      return undefined;
+    }).filter(_=>_).join(', ')}`;
   } else {
     const sub = type === 'whitelist' ? 'blacklist for disabled' : 'whitelist for allowed';
     return `No ${type} - see ${sub} channels!`
