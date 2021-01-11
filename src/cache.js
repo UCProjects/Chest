@@ -29,9 +29,15 @@ exports.get = (name) => exports.load()
 exports.all = () => [...cards.values()];
 
 function getClosest(needle = '', directory = []) {
-  const card = directory.find((card) => {
+  const card = directory.find((card) => { // TODO: allow *actual* fuzzy match
     const cardName = translate(`card-name-${card.id}`, 1);
-    return cardName.toLowerCase() === needle.toLowerCase(); // TODO: allow fuzzy match
+    return cardName.toLowerCase() === needle.toLowerCase();
+  }) || directory.find((card) => {
+    const cardName = translate(`card-name-${card.id}`, 1);
+    return cardName.toLowerCase().startsWith(needle.toLowerCase());
+  }) || directory.find((card) => {
+    const cardName = translate(`card-name-${card.id}`, 1);
+    return cardName.toLowerCase().includes(needle.toLowerCase());
   });
   if (card) { // Return a clone and translate some things
     return {
