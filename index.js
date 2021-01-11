@@ -21,22 +21,25 @@ connection.on('messageCreate', (msg) => {
   const filtered = msg.content.replace(/<@!/g, '<@');
   const from = prefixes.map((pref) => pref.replace('@mention', connection.user.mention)).filter(_ => _);
   const prefix = from.find((pref) => filtered.startsWith(pref));
-  
   if (!prefix) return;
-  
+
   const {
     message: rawText = '',
     flags = {},
   } = parseFlags(filtered.substring(prefix.length));
-  
-  if (['card!', 'chest!'].includes(prefix.toLowerCase())) {
-    lookup(msg, rawText).catch((e) => {
-      console.error(e);
-      return connection.createMessage(msg.channel.id, 'Error retrieving card')
-        .catch(console.error); // Oh the irony
-    });
+
+  if (prefix !== connection.user.mention) { // Any prefix that manages to get here (other than mention) is a lookup
+    lookup(msg, rawText).catch(catchError);
   } else {
-    // Process command
+    const args = rawText.split(/\s+/g);
+    const command = args.shift() || '';
+    if (!command) return;
+    Promise.resolve(processCommand(msg, { command, args, flags }))
+      .then((response) => {
+        if (!response || response instanceof Discord.Message) return;
+        return connection.createMessage(msg.channel.id, response);
+      })
+      .catch(catchError);
   }
 }).on('error', (e) => {
   console.error(e);
@@ -50,30 +53,57 @@ cache.load()
     process.exit(1);
   });
 
-function whitelist(msg, flags) {
+function processCommand(msg, {
+  command, args = [], flags = {},
+}) {
+  let type = 'whitelist';
+  switch (command) {
+    case 'bl':
+    case 'blacklist':
+      type = 'blacklist'; // fall-through
+    case 'wl':
+    case 'whitelist':
+      flags.add = flags.add || args.includes('add');
+      flags.clear = flags.clear || args.includes('clear');
+      return list(msg, flags, type);
+    case 'c':
+    case 'card':
+    case 'find':
+    case 'lookup': return lookup(msg, args.join(' '));
+  }
+  return Promise.resolve();
+}
+
+function list(msg, flags = {}, type) {
   if (!msg.channel.permissionsOf(msg.author.id).has('manageRoles')) return;
-  const path = `discord.${msg.guildID || msg.channel.guild.id}.whitelist`;
+  const path = `discord.${msg.guildID || msg.channel.guild.id}.${type}`;
   if (flags.clear) {
     config.delete(path);
-    return 'Cleared whitelist';
+    return `Cleared ${type}`;
   } else if (flags.add) {
     const value = config.get(path) || {};
     value[msg.channel.id] = true;
     config.set(path, value);
+    return `Added channel to ${type}`;
   } else if (config.has(path)) {
-    return `Whitelisted:\n${Object.keys(config.get(path)).map(id => connection.getChannel(id).mention).join('\n')}`;
+    return `Current ${type}: ${Object.keys(config.get(path)).map(id => connection.getChannel(id).mention).join(', ')}`;
   } else {
-    return 'No whitelist - all channels can use me!';
+    const sub = type === 'whitelist' ? 'blacklist for disabled' : 'whitelist for allowed';
+    return `No ${type} - see ${sub} channels!`
   }
 }
 
+function disabled(guildID, channelID) {
+  const prefix = `discord.${guildID}`;
+  return config.has(`${prefix}.blacklist.${channelID}`) || // Is on the black list OR
+    config.has(`${prefix}.whitelist`) && // Has a whitelist BUT
+    !config.has(`${prefix}.whitelist.${channelID}`); // is not on the whitelist
+}
+
 function lookup(msg, cardName) {
-  const path = `discord.${msg.guildID || msg.channel.guild.id}.whitelist`;
-  if (config.has(path)) {
-    if (!config.has(`${path}.${msg.channel}`)) {
-      console.debug('Channel not whitelisted');
-      return;
-    }
+  if (disabled(msg.guildID || msg.channel.guild.id, msg.channel.id)) {
+    console.debug('Commands disabled on channel');
+    return;
   }
   // Lookup and return card
   return cache.get(cardName)
@@ -85,6 +115,7 @@ function lookup(msg, cardName) {
       }
     })
     .then((results) => {
+      if (!results) return results;
       if (results instanceof Buffer) {
         return connection.createMessage(msg.channel.id, undefined, {
           name: 'card.png',
@@ -93,4 +124,10 @@ function lookup(msg, cardName) {
       }
       return connection.createMessage(msg.channel.id, results);
     });
+}
+
+function catchError(e) {
+  console.error(e);
+  return connection.createMessage(msg.channel.id, 'Error processing command')
+    .catch(console.error); // Oh the irony
 }
