@@ -114,13 +114,14 @@ function disabled(guildID, channelID) {
     !config.has(`${prefix}.whitelist.${channelID}`); // is not on the whitelist
 }
 
-function lookup(msg, cardName) {
+function lookup(msg, cardName = '') {
   if (disabled(msg.guildID || msg.channel.guild.id, msg.channel.id)) {
     console.debug('Commands disabled on channel');
     return;
   }
+  if (!cardName.trim()) return '\* No name provided';
   // Lookup and return card
-  return cache.get(cardName)
+  return cache.get(cardName.trim())
     .then((card) => {
       if (card) {
         return image(card);
