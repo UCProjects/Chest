@@ -1,7 +1,11 @@
 const Banana = require('banana-i18n');
+const undercards = require('../undercards');
 const extend = require('./extend');
 
 const banana = new Banana('en');
+
+const hour = 60 * 1000;
+let next = Date.now();
 
 exports.translate = (message, ...args) => {
   let text;
@@ -15,6 +19,14 @@ exports.translate = (message, ...args) => {
 };
 
 // TODO: load all languages at once
-exports.load = (data, lang) => banana.load(data, lang);
+exports.load = () => {
+  if (Date.now() < next) return Promise.resolve();
+  return undercards.get('/translation/en.json')
+    .then(({data}) => {
+      next = Date.now() + hour;
+      return data;
+    }).then((data) => banana.load(data))
+    .catch(console.error);
+}
 
 extend(banana, exports.translate);

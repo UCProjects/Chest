@@ -1,9 +1,5 @@
-const { default: axios } = require("axios");
+const undercards = require('./undercards');
 const { translate, load } = require('./lang');
-
-const undercards = axios.create({
-  baseURL: 'https://undercards.net',
-});
 
 const cards = new Map();
 
@@ -11,10 +7,9 @@ const day = 24 * 60 * 1000;
 let next = Date.now();
 
 exports.load = () => {
-  if (Date.now() < next) return Promise.resolve();
-  return Promise.all([undercards.get('/AllCards'), undercards.get('https://undercards.net/translation/en.json')])
-    .then(([{ data: { cards: newCards } }, { data: lang }]) => {
-      if (lang) load(lang);
+  if (Date.now() < next) return load();
+  return Promise.all([undercards.get('/AllCards'), load()])
+    .then(([{ data: { cards: newCards } }]) => {
       if (newCards) {
         cards.clear(); // Remove old cards
         JSON.parse(newCards).forEach(card => cards.set(card.id, card));
