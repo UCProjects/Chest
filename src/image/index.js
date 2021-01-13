@@ -15,7 +15,7 @@ module.exports = (card) => {
     },
     beforeScreenshot(page) {
       return page.$eval('.card', el => el.offsetHeight)
-        .then(height => page.$eval('body', (el, height) => el.style.height = height, height + 3))
+        .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
         .then(() => page.$eval('.name', (el, size = 15, step = 0.5) => {
           while (el.scrollWidth > el.clientWidth && size-step > 7) {
             size -= step;

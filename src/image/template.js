@@ -4,14 +4,14 @@ module.exports = `<html>
 <head>
   <style>
     @font-face { font-family: 'DTM-Mono'; src: url('https://firebasestorage.googleapis.com/v0/b/replay.uc.feildmaster.com/o/DTM-Mono.otf?alt=media&token=424020c7-7b2b-4217-971b-333fe1704da4') format('truetype'); }
-    body { font-family: 'DTM-Mono'; --dt: rgb(255, 0, 0); --patience: rgb(65, 252, 255); --bravery: rgb(252, 165, 0); --integ: rgb(0, 100, 255); --pers: rgb(213, 53, 217); --kindness: rgb(0, 192, 0); --justice: rgb(255, 255, 0); --font: rgb(255, 255, 255); --border: rgb(255, 255, 255); background-color: black; width: 166px; }
+    body { font-family: 'DTM-Mono'; --dt: rgb(255, 0, 0); --patience: rgb(65, 252, 255); --bravery: rgb(252, 165, 0); --integ: rgb(0, 100, 255); --pers: rgb(213, 53, 217); --kindness: rgb(0, 192, 0); --justice: rgb(255, 255, 0); --font: rgb(255, 255, 255); --border: rgb(255, 255, 255); background-color: black; width: 162px; }
     [data-overlay]::before { content: attr(data-overlay); position: absolute; font-family: segoe ui, monospace; bottom: 0; left: 0; font-size: 11px; color: rgb(255, 255, 255); }
     .outlined { text-shadow: -1px -1px 0 rgb(0, 0, 0), 1px 1px 0 rgb(0, 0, 0), -1px 1px 0 rgb(0, 0, 0), 1px -1px 0 rgb(0, 0, 0); }
     .row { display: flex; flex-direction: row; justify-content: space-between; }
     .black-bg { background-color: rgb(0, 0, 0); background-clip: padding-box; }
     .center-v { display: flex; align-items: center; }
     .center-h { display: flex; justify-content: center; }
-    .card { margin: 2px; border: 2px solid var(--border); color: var(--font); width: 162px; overflow: hidden; box-sizing: border-box; user-select: none; -moz-user-select: none; -webkit-user-select: none; }
+    .card { border: 2px solid var(--border); color: var(--font); width: 162px; overflow: hidden; box-sizing: border-box; user-select: none; -moz-user-select: none; -webkit-user-select: none; }
     .card * { margin: 0; box-sizing: border-box; padding: 0; }
     .top, .bottom { height: 30px; }
     .top > * { border-bottom: 2px solid var(--border); }
