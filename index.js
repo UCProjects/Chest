@@ -28,19 +28,22 @@ connection.on('messageCreate', (msg) => {
     flags = {},
   } = parseFlags(filtered.substring(prefix.length));
 
+  const args = rawText.split(/\s+/g);
+  let command;
+
   if (prefix !== connection.user.mention) { // Any prefix that manages to get here (other than mention) is a lookup
-    lookup(msg, rawText).catch(catchError);
+    command = prefix.substring(0, prefix.length - 1);
   } else {
-    const args = rawText.split(/\s+/g);
-    const command = args.shift() || '';
-    if (!command) return;
-    Promise.resolve(processCommand(msg, { command, args, flags }))
-      .then((response) => {
-        if (!response || response instanceof Discord.Message) return;
-        return connection.createMessage(msg.channel.id, response);
-      })
-      .catch(catchError);
+    command = args.shift() || '';
   }
+
+  if (!command) return;
+  Promise.resolve(processCommand(msg, { command, args, flags }))
+    .then((response) => {
+      if (!response || response instanceof Discord.Message) return;
+      return connection.createMessage(msg.channel.id, response);
+    })
+    .catch(catchError);
 }).on('error', (e) => {
   console.error(e);
 });
