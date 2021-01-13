@@ -31,13 +31,13 @@ connection.on('messageCreate', (msg) => {
   const args = rawText.split(/\s+/g);
   let command;
 
-  if (prefix !== connection.user.mention) { // Any prefix that manages to get here (other than mention) is a lookup
+  // TODO: split prefixes and aliases
+  if (![connection.user.mention, 'chest!', 'Chest!'].includes(prefix)) {
     command = prefix.substring(0, prefix.length - 1);
   } else {
     command = args.shift() || '';
   }
 
-  if (!command) return;
   Promise.resolve(processCommand(msg, { command, args, flags }))
     .then((response) => {
       if (!response || response instanceof Discord.Message) return;
@@ -57,10 +57,11 @@ cache.load()
   });
 
 function processCommand(msg, {
-  command, args = [], flags = {},
+  command = '', args = [], flags = {},
 }) {
+  if (!command) return;
   let type = 'whitelist';
-  switch (command) {
+  switch (command.toLowerCase()) {
     case 'bl':
     case 'blacklist':
       type = 'blacklist'; // fall-through
