@@ -6,7 +6,7 @@ function text(data, text, path = 'powers') {
   return `<span class="outlined" data-overlay="${text}">${image(data, path)}</span>`;
 }
 
-function buildStatus(card) {
+module.exports = function buildStatus(card) {
   const stats = [];
   if (card.cost < card.originalCost) stats.push('bonusCost');
   else if (card.cost > card.originalCost) stats.push('malusCost');
@@ -37,5 +37,3 @@ function buildStatus(card) {
   if (card.creatorFixedId) stats.push('created');
   card.status = stats.map((stat = '') => stat.startsWith('<') ? stat : image(stat));
 }
-
-module.exports = buildStatus;

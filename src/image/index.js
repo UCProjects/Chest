@@ -22,6 +22,7 @@ module.exports = (card) => {
             el.style.fontSize = `${size}px`;
           }
         }))
+        //.then(() => page.$eval('.card', el => el.outerHTML)).then(console.log)
         .catch(console.error);
     }
   })
