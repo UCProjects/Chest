@@ -22,7 +22,7 @@ module.exports = `<html>
     .status, .tribes { position: absolute; right: 2px; display: flex; }
     .status { top: 4px; }
     .tribes { bottom: 0px; }
-    .status > img, .tribes > img, .status > span { margin-left: 2px; }
+    .status > img, .tribes > img, .status > span { margin-right: 2px; }
     .status > span { position: relative; }
     .status img, .tribes img { width: 16px; }
     .description { border-top: 2px solid var(--border); text-align: center; font-size: 0.8rem; padding: 2px 1px; min-height: 80px; }
