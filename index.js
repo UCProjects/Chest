@@ -59,7 +59,7 @@ cache.load()
 function processCommand(msg, {
   command = '', args = [], flags = {},
 }) {
-  if (!command) return;
+  if (!command) return '';
   let type = 'whitelist';
   switch (command.toLowerCase()) {
     case 'bl':
@@ -82,7 +82,7 @@ function processCommand(msg, {
       }
      };
   }
-  return Promise.resolve();
+  return '';
 }
 
 function list(msg, flags = {}, type) {
