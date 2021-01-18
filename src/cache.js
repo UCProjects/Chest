@@ -21,6 +21,9 @@ exports.load = () => {
 exports.get = (name) => exports.load()
   .then(() => getClosest(name, [...cards.values()]));
 
+exports.card = (id) => exports.load()
+  .then(cards.get(id));
+  
 exports.all = () => [...cards.values()];
 
 function getClosest(needle = '', directory = []) {
