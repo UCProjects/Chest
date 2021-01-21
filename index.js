@@ -41,6 +41,7 @@ connection.on('messageCreate', (msg) => {
   msg.command = command;
   msg.reply = (content, file) => connection.createMessage(msg.channel.id, content, file);
   msg.connection = connection;
+  msg.mention = connection.user.mention;
 
   Promise.resolve(commands.get(command.toLowerCase()))
     .then((command) => command && command.handle(msg, args, flags))
