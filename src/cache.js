@@ -1,5 +1,6 @@
 const undercards = require('./undercards');
 const { translate, load } = require('./lang');
+const { normalMode } = require('./lang/extend');
 
 const cards = new Map();
 
@@ -34,6 +35,7 @@ function getClosest(needle = '', directory = []) {
     directory.find(card => card.name.toLowerCase().startsWith(needle.toLowerCase())) || 
     directory.find(card => card.name.toLowerCase().includes(needle.toLowerCase()));
   if (card) { // Return a clone and translate some things
+    normalMode();
     return {
       ...card,
       description: translate(`card-${card.id}`),
