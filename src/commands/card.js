@@ -31,6 +31,7 @@ function handler(msg, args = [], flags = {}) {
     .then((results) => {
       if (results instanceof Buffer) {
         return msg.reply({
+          content: ['c!', 'C!'].includes(msg.prefix) ? '**Warning**: `c!` will be changing in the future. Please use `card!` (or `chest!c`) instead.': '',
           embed: {
             image: {
               url: 'attachment://card.png',
