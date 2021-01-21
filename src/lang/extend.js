@@ -1,3 +1,5 @@
+let simple = false;
+
 function parse(nodes) {
   const found = nodes.findIndex((node) => node.startsWith('override='));
   const override = !!~found && nodes.splice(found, 1)[0];
@@ -13,6 +15,7 @@ function getKey(prefix, name) {
 }
 
 function getText(text, classes, data = {}) {
+  if (simple) return classes === 'underlined' ? `__${text}__` : `**${text}**`;
   return `<span class="${classes}"${Object.keys(data).map((key) => ` data-${key}="${data[key]}"`).join('')}>${text}</span>`;
 }
 
@@ -109,3 +112,7 @@ module.exports = (banana, translate) => {
     emitter[key] = val;
   });
 };
+
+module.exports.simpleMode = () => simple = true;
+
+module.exports.normalMode = () => simple = false;
