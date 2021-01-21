@@ -15,7 +15,8 @@ module.exports = new Command({
   alias: ['invite', 'link'],
   examples: [],
   usage: [],
-  description: '',
+  description: 'Add me to your server!',
+  disabled: !process.env.INVITE,
   flags: [],
   handler,
 });

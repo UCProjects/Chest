@@ -38,7 +38,7 @@ module.exports = new Command({
   alias: [...whitelist, ...blacklist],
   examples: [],
   usage: [],
-  description: '',
+  description: 'Command whitelist/blacklist',
   flags: [{
     alias: ['add']
   }, {

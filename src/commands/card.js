@@ -52,8 +52,8 @@ module.exports = new Command({
   title: '',
   alias: ['card', 'c', 'check', 'lookup'],
   examples: [],
-  usage: [],
-  description: '',
+  usage: ['<card name>'],
+  description: 'Look up card data',
   flags: [],
   handler,
 });
