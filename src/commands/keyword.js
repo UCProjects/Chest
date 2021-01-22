@@ -16,7 +16,7 @@ events.on('load', (data) => {
     });
   });
   // Manually add KR, this is the *only* keyword that doesn't have a card description
-  cache.set('status-kr', {
+  cache.set('kw-kr', {
     name: translate('stat-kr'),
     description: translate('status-kr'),
   })
