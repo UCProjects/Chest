@@ -39,7 +39,7 @@ function handler(msg, args = [], flags = {}) {
       description,
       fields: [{
         name: `Cards`,
-        value: cards.map(({ name }) => name).join(', ') || 'None',
+        value: cards.map(({ name }) => name).join('\n') || 'None',
       }],
     },
   };
