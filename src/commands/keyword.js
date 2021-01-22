@@ -31,7 +31,7 @@ function handler(msg, args = [], flags = {}) {
   const needle = args.join('-').toLowerCase();
   if (!needle) return '* No keyword provided';
   const { name, description } = cache.get(`${prefix}${needle}`) || {};
-  if (!name) return `* ${args.join(' ')} not found`;
+  if (!name) return `* Keyword \`${args.join(' ')}\` not found`;
   return {
     embed: {
       title: name,
