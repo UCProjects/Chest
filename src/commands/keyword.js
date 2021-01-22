@@ -15,6 +15,11 @@ events.on('load', (data) => {
       description: translate(`${key}-desc`),
     });
   });
+  // Manually add KR, this is the *only* keyword that doesn't have a card description
+  cache.set('status-kr', {
+    name: translate('stat-kr'),
+    description: translate('status-kr'),
+  })
 });
 
 function handler(msg, args = [], flags = {}) {
