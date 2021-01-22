@@ -19,7 +19,12 @@ events.on('load', (data) => {
   cache.set('kw-kr', {
     name: translate('stat-kr'),
     description: translate('status-kr'),
-  })
+  });
+  // Manually add determination, this is the only status that is applied because of RARITY (and isn't explained anywhere else)
+  cache.set('kw-determination', {
+    name: translate('soul-determination'),
+    description: translate('status-determination'),
+  });
 });
 
 function handler(msg, args = [], flags = {}) {
