@@ -6,6 +6,8 @@ const { simpleMode } = require('../lang/extend');
 const cache = new Map();
 const prefix = 'tribe-'
 
+const rarities = ['Token', 'Determination', 'Legendary', 'Epic', 'Rare', 'Common', 'Base' ];
+
 events.on('load', (data) => {
   cache.clear();
   simpleMode();
@@ -30,10 +32,22 @@ function handler(msg, args = [], flags = {}) {
   simpleMode();
   const tribe = key.substring(6).replace('-', '_').toUpperCase();
   const cards = allCards().filter(({ tribes }) => tribes.includes(tribe));
+
+  const fields = [];
+  rarities.forEach((name) => {
+    const subset = cards.filter(({ rarity }) => rarity.toLowerCase() === name.toLowerCase());
+    if (!subset.length) return;
+    fields.push({
+      name,
+      value: subset.map(({name}) => name).join('\n'),
+      inline: true,
+    });
+  });
+
   return {
     embed: {
       title: `${translate(key, cards.length)} (${cards.length})`,
-      description: cards.length ? cards.map(({name}) => name).join(', ').substring(0, 2000) : 'None',
+      fields,
       thumbnail: {
         url: `https://undercards.net/images/tribes/${tribe}.png`,
         width: 16,
