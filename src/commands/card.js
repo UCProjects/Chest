@@ -18,20 +18,20 @@ function handler(msg, args = [], flags = {}) {
     return;
   }
   const cardName = args.join(' ');
-  if (!cardName.trim()) return '* No name provided';
+  if (!cardName.trim()) return '* No card name provided';
   // Lookup and return card
   return cache.get(cardName.trim())
     .then((card) => {
       if (card) {
         return image(card);
       } else {
-        return `* ${cardName} not found`
+        return `* Card \`${cardName}\` not found`
       }
     })
     .then((results) => {
       if (results instanceof Buffer) {
         return msg.reply({
-          content: ['c!', 'C!'].includes(msg.prefix) ? '**Warning**: `c!` will be changing in the future. Please use `card!` (or `chest!c`) instead.': '',
+          content: ['c!', 'C!'].includes(msg.prefix) ? '**Warning**: `c!` (short for `card!`) will stand for `chest!` in the future. Use `card!` (or `chest!c`) to hide this warning.': '',
           embed: {
             image: {
               url: 'attachment://card.png',

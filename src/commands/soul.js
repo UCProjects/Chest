@@ -31,7 +31,7 @@ function handler(msg, args = [], flags = {}) {
   };
   const { name, description } = [...cache.values()]
     .find(({ aliases }) => aliases.includes(needle)) || {};
-  if (!name) return `* ${args.join(' ')} not found`;
+  if (!name) return `* Soul \`${args.join(' ')}\` not found`;
   const cards = allCards().filter(({ soul: { name: soul } = {} }) => soul === name);
   return {
     embed: {
