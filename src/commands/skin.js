@@ -40,15 +40,14 @@ function handler(msg, args = [], flags = {}) {
         },
       };
     }
-    const artist = [...artists.keys()].find((name) => name.toLowerCase() === needle);
+    const artist = [...artists.keys()].find(name => name.toLowerCase() === needle || name.toLowerCase().startsWith(needle));
     if (artist) {
       const works = artists.get(artist);
+      const description = works.map(entry => entry.name).join(', ');
       return {
         embed: {
           title: `${artist} skins (${works.length})`,
-          description: works.slice(0, 50)
-            .map(entry => `${entry.name} - ${entry.cardName}`)
-            .join('\n'),
+          description: description.substring(0, getSafeLength(description)),
         }
       };
     } else if (msg.command.toLowerCase().startsWith('artist')) {
@@ -79,17 +78,24 @@ function handler(msg, args = [], flags = {}) {
     }
     return get(needle).then((card) => {
       if (!card) return `* Skin \`${args.join(' ')}\` not found`;
-      const works = [...skins.values()].filter((skin) => skin.cardId === card.id);
+      const works = [...skins.values()].filter(skin => skin.cardId === card.id);
+      const description = works.map(entry => entry.name).join(', ');
       return {
         embed: {
           title: `${card.name} Skins (${works.length})`,
-          description: works.slice(0, 50)
-            .map(entry => `${entry.name} by ${entry.authorName}`)
-            .join('\n'),
+          description: description.substring(0, getSafeLength(description)),
         },
       };
     });
   });
+}
+
+function getSafeLength(text = '', length = 2048, splitter = ',') {
+  let len = text.length;
+  while (len > length) {
+    len = text.lastIndexOf(splitter) - 1;
+  }
+  return len;
 }
 
 module.exports = new Command({
