@@ -31,7 +31,7 @@ connection.on('messageCreate', (msg) => {
   let command;
 
   // TODO: split prefixes and aliases
-  if (![connection.user.mention, 'chest!', 'Chest!'].includes(prefix)) {
+  if (['card!', 'Card!'].includes(prefix)) {
     command = prefix.substring(0, prefix.length - 1);
   } else {
     command = args.shift() || '';
@@ -44,9 +44,25 @@ connection.on('messageCreate', (msg) => {
   msg.mention = connection.user.mention;
 
   Promise.resolve(commands.get(command.toLowerCase()))
-    .then((command) => command && command.enabled(msg) && command.handle(msg, args, flags))
+    .then((command) => {
+      if (!command) {
+        if (['c!', 'C!'].includes(msg.prefix)) {
+          return Promise.resolve(commands.get('help'))
+            .then(c => c.handle(msg, args, flags))
+            .then((response) => {
+              if (response && response.embed) {
+                response.content = `**Warning**: \`${msg.command}\` now stands for \`chest!\`.`;
+              }
+              return response;
+            });
+        }
+        else return undefined;
+      }
+      if (!command.enabled(msg)) return undefined;
+      return command.handle(msg, args, flags);
+    })
     .then((response) => {
-      if (!response || response instanceof Discord.Message) return;
+      if (!response || response instanceof Discord.Message) return undefined;
       return msg.reply(response);
     })
     .catch((e) => {
