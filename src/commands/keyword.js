@@ -9,14 +9,7 @@ const prefix = 'kw-'
 events.on('load', (data) => {
   cache.clear();
   simpleMode();
-  Object.keys(data).forEach((key) => {
-    if (!key.startsWith(prefix) || key.endsWith('-desc')) return;
-    cache.set(key, {
-      name: translate(key),
-      description: translate(`${key}-desc`),
-    });
-  });
-  // Manually add KR, this is the *only* keyword that doesn't have a card description
+  // Manually add KR, this is the *only* keyword that doesn't have a description
   cache.set('kw-kr', {
     name: translate('stat-kr'),
     description: translate('status-kr'),
@@ -25,6 +18,21 @@ events.on('load', (data) => {
   cache.set('kw-determination', {
     name: translate('soul-determination'),
     description: translate('status-determination'),
+  });
+  // Manually add another chance, a reworked spell (the status still exists though)
+  if (data['status-another-chance']) {
+    cache.set('kw-another-chance', {
+      name: 'Another Chance',
+      description: translate('status-another-chance'),
+    });
+  }
+  cache.set()
+  Object.keys(data).forEach((key) => {
+    if (!key.startsWith(prefix) || key.endsWith('-desc')) return;
+    cache.set(key, {
+      name: translate(key),
+      description: translate(`${key}-desc`),
+    });
   });
 });
 
