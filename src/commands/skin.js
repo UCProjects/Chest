@@ -2,6 +2,7 @@ const Command = require('chat-commands/src/command');
 const { fetch, skins, artists } = require('../skins');
 const { get } = require('../cache');
 const disabled = require('../disabled');
+const random = require('../util/random');
 
 function handler(msg, args = [], flags = {}) {
   return fetch().catch((e) => {
@@ -20,7 +21,7 @@ function handler(msg, args = [], flags = {}) {
           },
         };
       }
-      const skin = [...skins.values()][Math.floor(Math.random() * skins.size)];
+      const skin = random([...skins.values()]);
       return {
         embed: {
           title: `Skins (${skins.size})`,
