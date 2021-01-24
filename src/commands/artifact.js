@@ -7,7 +7,7 @@ const { simpleMode } = require('../lang/extend');
 function handler(msg, args = [], flags = {}) {
   return fetch().catch((e) => {
     console.error(e);
-    return '* Error retreiving artifacts';
+    return '* Error retrieving artifacts';
   }).then((error) => {
     if (error) return error;
     simpleMode();

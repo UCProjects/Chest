@@ -6,7 +6,7 @@ const disabled = require('../disabled');
 function handler(msg, args = [], flags = {}) {
   return fetch().catch((e) => {
     console.error(e);
-    return '* Error retreiving skins';
+    return '* Error retrieving skins';
   }).then((error) => {
     if (error) return error;
     const needle = args.join(' ').toLowerCase();
