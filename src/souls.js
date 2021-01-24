@@ -18,7 +18,7 @@ function aliases(name = '') {
 
 function find(name = '') {
   const needle = name.toLowerCase();
-  return souls.some(soul => aliases(soul).includes(needle));
+  return souls.find(soul => aliases(soul).includes(needle));
 }
 
 module.exports = {
