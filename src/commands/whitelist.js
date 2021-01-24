@@ -3,10 +3,10 @@ const blacklist = require('../blacklist');
 
 module.exports = new Command({
   title: '',
-  alias: ['blacklist', 'bl'],
+  alias: ['whitelist', 'wl'],
   examples: [],
   usage: [],
-  description: 'Command blacklist.\nAny channel in the blacklist disables most bot commands.',
+  description: 'Command whitelist.\nAny channel not on the whitelist disables most bot commands.',
   flags: [{
     alias: ['add']
   }, {
@@ -16,7 +16,7 @@ module.exports = new Command({
   }],
   handler(msg, args, flags) {
     return blacklist(msg, flags, {
-      type: 'blacklist',
+      type: 'whitelist',
       server: msg.guildID || msg.channel.guild.id,
       channel: msg.channel.id,
     });
