@@ -1,5 +1,6 @@
 const { artifacts, fetch } = require('../artifacts');
 const Command = require('chat-commands/src/command');
+const disabled = require('../disabled');
 const { translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
 
@@ -57,5 +58,6 @@ module.exports = new Command({
   usage: [],
   description: 'Look up artifact data',
   flags: [],
+  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
   handler,
 });

@@ -1,4 +1,5 @@
 const Command = require('chat-commands/src/command');
+const disabled = require('../disabled');
 const { events, translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
 
@@ -47,5 +48,6 @@ module.exports = new Command({
   usage: [],
   description: 'Get the description of a keyword',
   flags: [],
+  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
   handler,
 });

@@ -1,13 +1,13 @@
 const Command = require('chat-commands/src/command');
+const disabled = require('../disabled');
 
 function handler(context, args = [], flags = {}) {
   const invite = process.env.INVITE;
-  if (invite) return {
+  return {
     embed: {
       description: `[Add me to your server!](${invite})`,
     },
   };
-  return undefined;
 }
 
 module.exports = new Command({
@@ -16,7 +16,7 @@ module.exports = new Command({
   examples: [],
   usage: [],
   description: 'Add me to your server!',
-  disabled: !process.env.INVITE,
+  disabled: (msg) => !process.env.INVITE || disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
   flags: [],
   handler,
 });
