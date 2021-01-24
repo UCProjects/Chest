@@ -1,6 +1,7 @@
 const Command = require('chat-commands/src/command');
 const { all: allCards } = require('../cache');
 const { aliases } = require('../souls');
+const disabled = require('../disabled');
 const { events, translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
 
