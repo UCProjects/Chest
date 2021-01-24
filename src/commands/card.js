@@ -18,6 +18,7 @@ function handler(msg, args = [], flags = {}) {
     .then((results) => {
       if (results instanceof Buffer) {
         return msg.reply({
+          content: ['c!', 'C!'].includes(msg.prefix) ? '**Warning**: `c!` (short for `card!`) will stand for `chest!` in the future. Use `card!` (or `chest!c`) to hide this warning.': '',
           embed: {
             image: {
               url: 'attachment://card.png',
