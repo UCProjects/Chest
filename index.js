@@ -47,6 +47,7 @@ connection.on('messageCreate', (msg) => {
     .then((command) => {
       if (!command) {
         if (['c!', 'C!'].includes(msg.prefix)) {
+          msg.command = 'help';
           return Promise.resolve(commands.get('help'))
             .then(c => c.handle(msg, args, flags))
             .then((response) => {
