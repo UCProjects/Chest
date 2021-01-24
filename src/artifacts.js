@@ -11,18 +11,14 @@ function fetch() {
   if (!password) return Promise.reject('No login');
   if (Date.now() < next) return Promise.resolve();
   return login(password)
-    .then(({ headers }) => {
-      const Cookie = headers['set-cookie'].map(cookie => cookie.split(";")[0]).join("; ") + ";";
+    .then(Cookie => undercards.get('/DecksConfig', { headers: { Cookie } }))
+    .then(({ data }) => {
+      if (!data) throw new Error('Missing artifact data');
+      artifacts.clear();
+      next = Date.now() + day;
 
-      return undercards.get('/DecksConfig', { headers: { Cookie } })
-        .then(({ data }) => {
-          if (!data) throw new Error('Missing artifact data');
-          artifacts.clear();
-          next = Date.now() + day;
-
-          JSON.parse(data.allArtifacts)
-            .forEach(artifact => artifacts.set(artifact.id, artifact));
-        });
+      JSON.parse(data.allArtifacts)
+        .forEach(artifact => artifacts.set(artifact.id, artifact));
     });
 }
 

@@ -29,7 +29,7 @@ function login(body) {
     //req.on("error", console.error.bind(console));
     if (body) req.write(body);
     req.end();
-  });
+  }).then(({ headers }) => `${headers['set-cookie'].map(cookie => cookie.split(';')[0]).join('; ')};`);
 }
 
 module.exports = login;
