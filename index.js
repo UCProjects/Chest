@@ -44,7 +44,7 @@ connection.on('messageCreate', (msg) => {
   msg.mention = connection.user.mention;
 
   Promise.resolve(commands.get(command.toLowerCase()))
-    .then((command) => command && command.handle(msg, args, flags))
+    .then((command) => command && command.enabled(msg) && command.handle(msg, args, flags))
     .then((response) => {
       if (!response || response instanceof Discord.Message) return;
       return msg.reply(response);
