@@ -11,12 +11,15 @@ function handler(msg, args = [], flags = {}) {
     if (error) return error;
     const needle = args.join(' ').toLowerCase();
     if (!needle) {
-      if (msg.command.toLowerCase().startsWith('artist')) return {
-        embed: {
-          title: `Artists (${artists.size})`,
-          description: `- ${[...artists.keys()].join('\n- ')}`,
-        },
-      };
+      if (msg.command.toLowerCase().startsWith('artist')) {
+        const description = [...artists.keys()].join(', ');
+        return {
+          embed: {
+            title: `Artists (${artists.size})`,
+            description: description.substring(0, getSafeLength(description, 2000)),
+          },
+        };
+      }
       const skin = [...skins.values()][Math.floor(Math.random() * skins.size)];
       return {
         embed: {
