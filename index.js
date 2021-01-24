@@ -52,7 +52,7 @@ connection.on('messageCreate', (msg) => {
             .then(c => c.handle(msg, args, flags))
             .then((response) => {
               if (response && response.embed) {
-                response.content = `**Warning**: \`${msg.prefix}\` now stands for \`chest!\`.`;
+                response.content = `**Notice**: \`${msg.prefix}\` now stands for \`chest!\`.`;
               }
               return response;
             });
