@@ -1,22 +1,9 @@
 const Command = require('chat-commands/src/command');
-const Configstore = require('configstore');
 const cache = require('../cache');
-const image = require('../image');
-
-const config = new Configstore('robot-98');
-
-function disabled(guildID, channelID) {
-  const prefix = `discord.${guildID}`;
-  return config.has(`${prefix}.blacklist.${channelID}`) || // Is on the black list OR
-    config.has(`${prefix}.whitelist`) && // Has a whitelist BUT
-    !config.has(`${prefix}.whitelist.${channelID}`); // is not on the whitelist
-}
+const { card: image } = require('../image');
+const disabled = require('../disabled');
 
 function handler(msg, args = [], flags = {}) {
-  if (disabled(msg.guildID || msg.channel.guild.id, msg.channel.id)) {
-    console.debug('Commands disabled on channel');
-    return;
-  }
   const cardName = args.join(' ');
   if (!cardName.trim()) return '* No card name provided';
   // Lookup and return card
@@ -56,5 +43,6 @@ module.exports = new Command({
   usage: ['<card name>'],
   description: 'Look up card data',
   flags: [],
+  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
   handler,
 });
