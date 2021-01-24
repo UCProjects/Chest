@@ -2,7 +2,7 @@ const Command = require('chat-commands/src/command');
 const HelpCommand = require('chat-commands/src/help');
 const fs = require('fs').promises;
 
-const commands = new Map();
+const commands = new Map([['', new Command()]]);
 
 fs.readdir(__dirname)
   .then(files => {
