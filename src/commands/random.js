@@ -32,7 +32,7 @@ module.exports = new Command({
   title: '',
   alias: ['random', 'rand', 'rarity'],
   examples: [],
-  usage: ['[rarity]'],
+  usage: '[rarity]',
   description: 'Gets a random card',
   flags: [],
   disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),

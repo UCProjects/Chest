@@ -39,7 +39,7 @@ module.exports = new Command({
   title: '',
   alias: ['card', 'c', 'check', 'lookup'],
   examples: [],
-  usage: ['<card name>'],
+  usage: '<card name>',
   description: 'Look up card data',
   flags: [],
   disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),

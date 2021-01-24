@@ -50,7 +50,7 @@ module.exports = new Command({
   title: '',
   alias: ['soul', 'class'],
   examples: [],
-  usage: [],
+  usage: '[soul]',
   description: 'Get description and cards for a soul',
   flags: [],
   disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),

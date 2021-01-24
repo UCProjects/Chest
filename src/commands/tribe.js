@@ -62,7 +62,7 @@ module.exports = new Command({
   title: '',
   alias: ['tribe'],
   examples: [],
-  usage: [],
+  usage: '[tribe]',
   description: 'Show the cards in a tribe',
   flags: [],
   disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),

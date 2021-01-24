@@ -55,7 +55,7 @@ module.exports = new Command({
   title: '',
   alias: ['artifact', 'art'],
   examples: [],
-  usage: [],
+  usage: '',
   description: 'Look up artifact data',
   flags: [],
   disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),

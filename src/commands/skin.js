@@ -102,7 +102,7 @@ module.exports = new Command({
   title: '',
   alias: ['skin', 'skins', 'artist', 'artists'],
   examples: [],
-  usage: [],
+  usage: '[skin|artist|card]',
   description: 'Look up skins for a card or artist',
   flags: [],
   disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),

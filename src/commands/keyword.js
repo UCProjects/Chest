@@ -53,7 +53,7 @@ module.exports = new Command({
   title: '',
   alias: ['keyword', 'kw', 'effect'],
   examples: [],
-  usage: [],
+  usage: '[keyword]',
   description: 'Get the description of a keyword',
   flags: [],
   disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
