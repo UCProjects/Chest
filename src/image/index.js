@@ -1,15 +1,16 @@
 const htmlImage = require('node-html-to-image');
 const fs = require('fs').promises;
 const path = require('path');
-const template = require('./template');
+const card = require('./template');
+const deck = require('./deck');
 const buildStatus = require('./helper');
 
 // Build a card image (TODO: cache images)
-module.exports = (card) => {
-  buildStatus(card);
+exports.card = (data) => {
+  buildStatus(data);
   return htmlImage({
-    html: template,
-    content: card,
+    html: card,
+    content: data,
     puppeteerArgs: {
       fullPage: false,
     },
@@ -28,6 +29,21 @@ module.exports = (card) => {
   })
     //.then((buffer) => cacheImage(buffer, card))
     .catch((e) => console.error('Failed to make card', e));
+};
+exports.deck = (data) => {
+  return htmlImage({
+    html: deck,
+    content: data,
+    puppeteerArgs: {
+      fullPage: false,
+    },
+    beforeScreenshot(page) {
+      return page.$eval('#deck', el => el.offsetHeight)
+        .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
+        .catch(console.error);
+    },
+  })
+    .catch(e => console.error('Failed to make deck', e));
 };
 
 function cacheImage(buffer, card) {
