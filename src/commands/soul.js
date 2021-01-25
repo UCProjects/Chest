@@ -16,7 +16,6 @@ events.on('load', (data) => {
     const name = translate(key);
     cache.set(key, {
       name,
-      aliases: aliases(name),
       description: translate(`${key}-desc`),
     });
   });
@@ -31,7 +30,7 @@ function handler(msg, args = [], flags = {}) {
     }
   };
   const { name, description } = [...cache.values()]
-    .find(({ aliases }) => aliases.includes(needle)) || {};
+    .find(({ name }) => aliases(name).includes(needle)) || {};
   if (!name) return `* Soul \`${args.join(' ')}\` not found`;
   const cards = allCards().filter(({ soul: { name: soul } = {} }) => soul === name);
   return {
