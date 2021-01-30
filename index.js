@@ -45,21 +45,7 @@ connection.on('messageCreate', (msg) => {
 
   Promise.resolve(commands.get(command.toLowerCase()))
     .then((command) => {
-      if (!command) {
-        if (['c!', 'C!'].includes(msg.prefix)) {
-          msg.command = 'help';
-          return Promise.resolve(commands.get('help'))
-            .then(c => c.handle(msg, args, flags))
-            .then((response) => {
-              if (response && response.embed) {
-                response.content = `**Notice**: \`${msg.prefix}\` now stands for \`chest!\`.`;
-              }
-              return response;
-            });
-        }
-        else return undefined;
-      }
-      if (!command.enabled(msg)) return undefined;
+      if (!command || !command.enabled(msg)) return undefined;
       return command.handle(msg, args, flags);
     })
     .then((response) => {
