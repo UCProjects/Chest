@@ -1,5 +1,5 @@
 const Command = require('chat-commands/src/command');
-const { find: findSoul, souls } = require('../souls');
+const { find: findSoul, souls, colors } = require('../souls');
 const { artifacts, fetch: loadArtifacts } = require('../artifacts');
 const { load: loadCards, all: allCards } = require('../cache');
 const { translate } = require('../lang');
@@ -16,16 +16,6 @@ const limits = {
   EPIC: 2,
   LEGENDARY: 1,
   DETERMINATION: 1,
-};
-
-const colors = {
-  KINDNESS: 49152,
-  JUSTICE: 16776960,
-  PATIENCE: 4324607,
-  PERSEVERANCE: 13972953,
-  BRAVERY: 16557312,
-  DETERMINATION: 16711680, 
-  INTEGRITY: 25855,
 };
 
 function handler(msg, args = [], flags = {}) {
