@@ -28,7 +28,10 @@ function handler(msg, args = [], flags = {}) {
   };
 
   const key = [...cache.keys()]
-    .find((key) => cache.get(key).toLowerCase() === needle);
+    .find((key) => {
+      const tribe = cache.get(key).toLowerCase();
+      return tribe === needle || `${tribe}s` === needle;
+    });
   if (!key || typeof key !== 'string') return `* ${args.join(' ')} not found`;
   simpleMode();
   const tribe = key.substring(6).replace('-', '_').toUpperCase();
