@@ -33,14 +33,26 @@ function handler(msg, args = [], flags = {}) {
     .find(({ name }) => aliases(name).includes(needle)) || {};
   if (!name) return `* Soul \`${args.join(' ')}\` not found`;
   const cards = allCards().filter(({ soul: { name: soul } = {} }) => soul === name);
+  const fields = [{
+    name: `Cards`,
+    value: cards
+      .filter(({ rarity }) => rarity !== 'TOKEN')
+      .map(({ name }) => name).join('\n') || 'None',
+    inline: true,
+  }];
+  const tokens = cards.filter(({ rarity }) => rarity === 'TOKEN');
+  if (tokens.length) {
+    fields.push({
+      name: 'Tokens',
+      value: tokens.map(({ name }) => name).join('\n'),
+      inline: true,
+    });
+  }
   return {
     embed: {
       title: name,
       description,
-      fields: [{
-        name: `Cards`,
-        value: cards.map(({ name }) => name).join('\n') || 'None',
-      }],
+      fields,
     },
   };
 }
