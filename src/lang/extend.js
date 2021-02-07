@@ -21,7 +21,7 @@ function getText(text, classes, data = {}) {
 
 module.exports = (banana, translate) => {
   const obj = {};
-  obj.ucp = ([ucp]) => getText(ucp, 'ucp');
+  obj.ucp = ([ucp]) => simple ? ucp : getText(ucp, 'ucp');
   obj.tribe = (nodes) => {
     const {args, override, empty} = parse(nodes);
     if (empty) return '';
@@ -95,14 +95,16 @@ module.exports = (banana, translate) => {
     return getText(text, rarity);
   };
   obj.division = (nodes) => {
-    const {args, empty} = parse(nodes);
+    const {args: [division, short], empty} = parse(nodes);
     if (empty) return '';
-    return undefined;
+    const [rank = '', number = ''] = division.split('_');
+    const title = translate(getKey('division', rank));
+    return short ? title.substring(0, 1) : `${title} ${number}`;
   };
   obj.cosmetic = (nodes) => {
     const {args: [cosmetic, name], empty} = parse(nodes);
     if (empty || !name) return '';
-    return `${translate(getKey('reward'), cosmetic)} - ${name}`;
+    return `${translate(getKey('reward', cosmetic))} - ${name}`;
   };
   
   const { emitter } = banana.parser;
