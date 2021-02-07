@@ -58,6 +58,6 @@ module.exports = new Command({
   usage: '',
   description: 'Look up artifact data',
   flags: [],
-  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
+  disabled: (msg) => !process.env.UC_LOGIN || disabled(msg),
   handler,
 });

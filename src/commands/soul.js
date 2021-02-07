@@ -64,6 +64,6 @@ module.exports = new Command({
   usage: '[soul]',
   description: 'Get description and cards for a soul',
   flags: [],
-  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
+  disabled,
   handler,
 });

@@ -14,7 +14,7 @@ module.exports = new Command({
   }, {
     alias: ['clear']
   }],
-  disabled: (msg) => !msg.channel.permissionsOf(msg.author.id).has('manageRoles'),
+  disabled: (msg) => !msg.channel.permissionsOf || !msg.channel.permissionsOf(msg.author.id).has('manageRoles'),
   handler(msg, args, flags) {
     return blacklist(msg, flags, {
       type: 'whitelist',

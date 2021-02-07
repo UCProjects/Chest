@@ -126,6 +126,6 @@ module.exports = new Command({
     alias: ['list'],
     description: 'Shows the first X (or 5 if omitted) in a list. (Limit 1-10)',
   }],
-  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
+  disabled: (msg) => !process.env.UC_LOGIN || disabled(msg),
   handler,
 });

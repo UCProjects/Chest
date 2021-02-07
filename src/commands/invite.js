@@ -16,7 +16,7 @@ module.exports = new Command({
   examples: [],
   usage: '',
   description: 'Add me to your server!',
-  disabled: (msg) => !process.env.INVITE || disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
+  disabled: (msg) => !process.env.INVITE || disabled(msg),
   flags: [],
   handler,
 });

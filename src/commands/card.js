@@ -42,6 +42,6 @@ module.exports = new Command({
   usage: '<card name>',
   description: 'Look up card data',
   flags: [],
-  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
+  disabled,
   handler,
 });

@@ -63,9 +63,15 @@ module.exports = new Command({
   },/*{
     alias: ['blacklist', 'bl'],
     usage: '',
-    description: 'Blacklist a card from the deck',
-  }*/],
-  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
+    description: 'Blacklist a rarity from the deck',
+  },*//* {
+    alias: ['include', 'i', '+'],
+    description: 'Include a card in the deck',
+  }, *//* {
+    alias: ['exclude', 'e', '!', '-'],
+    description: 'Exclude a card in the deck',
+  }, */],
+  disabled,
   handler,
 });
 

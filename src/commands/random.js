@@ -35,6 +35,6 @@ module.exports = new Command({
   usage: '[rarity]',
   description: 'Gets a random card',
   flags: [],
-  disabled: (msg) => disabled(msg.guildID || msg.channel.guild.id, msg.channel.id),
+  disabled,
   handler,
 });
