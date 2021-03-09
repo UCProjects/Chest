@@ -22,6 +22,8 @@ exports.load = () => {
 exports.get = (name) => exports.load()
   .then(() => getClosest(name, [...cards.values()]));
 
+exports.getSync = (name) => getClosest(name, [...cards.values()]);
+
 exports.card = (id) => cards.get(id);
   
 exports.all = () => [...cards.values()];

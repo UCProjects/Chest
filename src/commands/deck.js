@@ -1,12 +1,13 @@
 const Command = require('chat-commands/src/command');
 const { find: findSoul, souls, colors } = require('../souls');
 const { artifacts, fetch: loadArtifacts } = require('../artifacts');
-const { load: loadCards, all: allCards } = require('../cache');
+const { load: loadCards, all: allCards, getSync } = require('../cache');
 const { translate } = require('../lang');
 const { normalMode } = require('../lang/extend');
 const { deck: image } = require('../image');
 const disabled = require('../disabled');
 const random = require('../util/random');
+const array = require('../util/array');
 
 // Generate a deck (25 cards), for X soul, with min of Y spells, using rarity constraints
 const limits = {
@@ -30,7 +31,10 @@ function handler(msg, args = [], flags = {}) {
           id: soul,
           name: translate(`soul-${soul.toLowerCase()}`),
         },
-        cards: generateDeck(soul, flags),
+        cards: generateDeck(soul, {
+          ...flags,
+          include: array(this.flag('include', flags)),
+        }),
         artifacts: getArtifacts(),
       };
 
@@ -64,10 +68,11 @@ module.exports = new Command({
     alias: ['blacklist', 'bl'],
     usage: '',
     description: 'Blacklist a rarity from the deck',
-  },*//* {
+  },*/ {
     alias: ['include', 'i', '+'],
-    description: 'Include a card in the deck',
-  }, *//* {
+    usage: '<card>',
+    description: 'Include a card in the deck\n||Mystery bugged me so much for include, go bug him for me||',
+  }, /* {
     alias: ['exclude', 'e', '!', '-'],
     description: 'Exclude a card in the deck',
   }, */],
@@ -95,8 +100,8 @@ function getArtifacts() {
 
 function generateDeck(soul, {
   ranked = false,
-  // TODO: blacklist support
   blacklist = [],
+  include = [],
 }) {
   const cards = allCards()
     .filter(card => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul)); // Not token, no soul requirement, or matches soul
@@ -105,16 +110,28 @@ function generateDeck(soul, {
   let dtFlag = false;
 
   const deck = [];
-  while (deck.length < 25) {
-    const card = random(cards);
+  const limit = 25;
+
+  function addCard(card) {
     const amt = counts.get(card.id) || 0;
-    if (amt === limits[card.rarity]) continue;
+    if (amt === limits[card.rarity]) return;
     if (ranked && card.rarity === 'DETERMINATION') {
-      if (dtFlag) continue;
+      if (dtFlag) return;
       dtFlag = true;
     }
     deck.push(card);
     counts.set(card.id, amt + 1);
+  }
+
+  include.some((needle) => {
+    const card = getSync(needle);
+    if (card && card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul)) addCard(card);
+    return deck.length === limit;
+  });
+
+  while (deck.length < limit) {
+    const card = random(cards);
+    addCard(card);
   }
 
   // Translate names
