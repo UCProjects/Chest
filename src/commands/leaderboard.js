@@ -89,7 +89,7 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
     .filter(_ => _ !== 'main')
     .map(id => findUser(leaderboard, id))
     .filter(_ => _);
-  if (users.length === 1) return singleResult(leaderboard, users[0]);
+  if (users.length === 1) return singleResult(users[0]);
   return multiResult(users, 'Registered users');
 }
 
