@@ -29,8 +29,8 @@ function handler(msg, args = [], flags = {}) {
     .then((leaderboard) => {
       leaderboard.forEach((e, i) => e.rank = i); // Set rank
       const register = this.flag('register', flags);
+      const me = ['me', 'main'].includes(needle);
       if (register || this.flag('unregister', flags)) {
-        const me = ['me', 'main'].includes(needle);
         if (needle) {
           const path = `leaderboard.${msg.author.id}`;
           const entries = config.get(path) || {};
