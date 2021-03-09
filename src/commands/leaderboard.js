@@ -30,10 +30,11 @@ function handler(msg, args = [], flags = {}) {
       leaderboard.forEach((e, i) => e.rank = i); // Set rank
       const register = this.flag('register', flags);
       if (register || this.flag('unregister', flags)) {
+        const me = ['me', 'main'].includes(needle);
         if (needle) {
           const path = `leaderboard.${msg.author.id}`;
           const entries = config.get(path) || {};
-          if (needle === 'me') {
+          if (me) {
             return getRegistered(leaderboard, entries);
           }
           const user = findUser(leaderboard, needle);
@@ -65,7 +66,7 @@ function handler(msg, args = [], flags = {}) {
           return '* No username provided';
         }
       }
-      if (needle === 'me') {
+      if (me) {
         const entries = config.get(`leaderboard.${msg.author.id}`);
         return getRegistered(leaderboard, entries, { main: this.flag('main', flags) });
       } else if (needle) {
@@ -150,7 +151,7 @@ module.exports = new Command({
   title: '',
   alias: ['leaderboard', 'lb', 'rank'],
   examples: [],
-  usage: '[me|username]',
+  usage: '[<me|main>|username]',
   description: '',
   flags: [{
     alias: ['register', 'r', '+', 'save'],
@@ -159,7 +160,7 @@ module.exports = new Command({
     alias: ['unregister', 'u', '-', 'delete'],
     description: 'Remove a user from your discord',
   }, {
-    alias: ['main', 'm'],
+    alias: ['main', 'm', 'me'],
     description: 'Store/Lookup main account (limit one)',
   }],
   disabled,
