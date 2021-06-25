@@ -57,7 +57,10 @@ connection.on('messageCreate', (msg) => {
       return msg.reply('Error processing command')
         .catch(console.error); // Oh the irony
     });
-}).on('error', console.error);
+}).on('error', (e) => {
+  console.error(e);
+  process.exit();
+});
 
 cache.load()
   .then(() => connection.connect())
