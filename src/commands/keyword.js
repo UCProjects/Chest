@@ -38,7 +38,12 @@ events.on('load', (data) => {
 
 function handler(msg, args = [], flags = {}) {
   const needle = args.join('-').toLowerCase();
-  if (!needle) return '* No keyword provided';
+  if (!needle) return {
+    embed: {
+      title: 'Keywords',
+      description: [...cache.values()].map(({ name }) => name).join(', '),
+    },
+  };
   const { name, description } = cache.get(`${prefix}${needle}`) || {};
   if (!name) return `* Keyword \`${args.join(' ')}\` not found`;
   return {
