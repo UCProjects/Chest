@@ -100,6 +100,12 @@ function findUser(leaderboard = [userdata], needle) {
 
 function singleResult(entry = userdata) {
   if (entry === userdata) return false;
+  const {
+    winsRanked: wins,
+    lossesRanked: losses,
+    division,
+    eloRanked: elo,
+  } = entry;
   return {
     embed: {
       author: {
@@ -113,26 +119,30 @@ function singleResult(entry = userdata) {
       ].join('\n'),
       fields: [{
         name: translate('leaderboard-division'),
-        value: translate(`{{DIVISION:${entry.division}}}`),
+        value: translate(`{{DIVISION:${division}}}`),
         inline: true,
       }, {
         name: translate('leaderboard-progress'),
-        value: `${entry.eloRanked}${entry.division !== 'LEGEND' ? ` (${Math.floor((entry.eloRanked % 25) / 25 * 100)}%)` : ''}`,
+        value: `${elo}${division !== 'LEGEND' ? ` (${Math.floor((elo % 25) / 25 * 100)}%)` : ''}`,
         inline: true,
       }, {
         name: '------',
         value: 'Stats',
       }, {
         name: translate('leaderboard-w'),
-        value: entry.winsRanked,
+        value: wins,
         inline: true,
       }, {
         name: translate('leaderboard-l'),
-        value: entry.lossesRanked,
+        value: losses,
         inline: true,
       }, {
         name: translate('leaderboard-ws'),
         value: entry.winStreak,
+        inline: true,
+      }, {
+        name: 'WR',
+        value: `${Math.floor(wins / (wins + losses) * 100)}%`,
         inline: true,
       }],
     },
