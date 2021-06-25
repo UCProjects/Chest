@@ -117,7 +117,7 @@ function singleResult(entry = userdata) {
         inline: true,
       }, {
         name: translate('leaderboard-progress'),
-        value: `${entry.eloRanked}${entry.division !== 'LEGEND' ? ` (${(entry.eloRanked % 25) / 25 * 100}%)` : ''}`,
+        value: `${entry.eloRanked}${entry.division !== 'LEGEND' ? ` (${Math.floor((entry.eloRanked % 25) / 25 * 100)}%)` : ''}`,
         inline: true,
       }, {
         name: '------',
