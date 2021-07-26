@@ -29,7 +29,7 @@ exports.card = (id) => cards.get(id);
 exports.all = () => [...cards.values()];
 
 function getClosest(needle = '', directory = []) {
-  directory.forEach(card => card.name = translate(`card-name-${card.id}`, 1))
+  directory.forEach(card => card.name = translate(`card-name-${card.id}`, 1));
   directory.sort((a, b) => a.name.length - b.name.length || a.name.localeCompare(b.name));
   // TODO: allow *actual* fuzzy match
   const card = directory.find(card => card.name.toLowerCase() === needle.toLowerCase()) ||
