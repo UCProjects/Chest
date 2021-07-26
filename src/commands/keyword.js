@@ -2,6 +2,7 @@ const Command = require('chat-commands/src/command');
 const disabled = require('../disabled');
 const { events, translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
+const getSafeLength = require('../util/safeLength');
 
 const cache = new Map();
 const prefix = 'kw-'
@@ -26,7 +27,6 @@ events.on('load', (data) => {
       description: translate('status-another-chance'),
     });
   }
-  cache.set()
   Object.keys(data).forEach((key) => {
     if (!key.startsWith(prefix) || key.endsWith('-desc')) return;
     cache.set(key, {
@@ -41,7 +41,7 @@ function handler(msg, args = [], flags = {}) {
   if (!needle) return {
     embed: {
       title: 'Keywords',
-      description: [...cache.values()].map(({ name }) => name).join(', '),
+      description: getSafeLength([...cache.values()].map(({ name }) => name).join(', ')),
     },
   };
   const { name, description } = cache.get(`${prefix}${needle}`) || {};
