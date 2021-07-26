@@ -5,7 +5,7 @@ const day = 24 * 60 * 1000;
 let next = Date.now();
 
 const skins = new Map();
-const artists = new Map([['', {}]]);
+const artists = new Map([['', []]]);
 
 function fetch() {
   const password = process.env.UC_LOGIN;
