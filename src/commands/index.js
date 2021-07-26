@@ -27,6 +27,7 @@ fs.readdir(__dirname)
     // Add default help command
     const help = new HelpCommand({
       commands: array,
+      description: process.env.HELP ? `Want a feature? Found a bug? [Tell us!](${process.env.HELP})` : undefined,
     });
     array.push(help);
     commands.set('help', help)
