@@ -1,6 +1,7 @@
 const Command = require('chat-commands/src/command');
 const Configstore = require('configstore');
 const disabled = require('../disabled');
+const floor = require('../util/floor');
 const { translate } = require('../lang');
 const undercards = require('../undercards');
 
@@ -123,7 +124,7 @@ function singleResult(entry = userdata) {
         inline: true,
       }, {
         name: translate('leaderboard-progress'),
-        value: `${elo}${division !== 'LEGEND' ? ` (${Math.floor((elo % 25) / 25 * 100)}%)` : ''}`,
+        value: `${elo}${division !== 'LEGEND' ? ` (${floor((elo % 25) / 25 * 100)}%)` : ''}`,
         inline: true,
       }, {
         name: '------',
@@ -142,7 +143,7 @@ function singleResult(entry = userdata) {
         inline: true,
       }, {
         name: 'WR',
-        value: `${Math.floor(wins / (wins + losses) * 100)}%`,
+        value: `${floor(wins / (wins + losses) * 100)}%`,
         inline: true,
       }],
     },
