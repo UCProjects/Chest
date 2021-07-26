@@ -45,7 +45,7 @@ connection.on('messageCreate', (msg) => {
 
   Promise.resolve(commands.get(command.toLowerCase()))
     .then((command) => {
-      if (!command || !command.enabled(msg)) return undefined;
+      if (!command || !command.enabled(msg) && !bypass(msg, flags)) return undefined;
       return command.handle(msg, args, flags);
     })
     .then((response) => {
@@ -69,3 +69,7 @@ cache.load()
     console.error(e);
     process.exit(1);
   });
+
+function bypass(msg, { admin = false }) {
+  return admin && msg.channel.permissionsOf(msg.author.id).has('administrator');
+}
