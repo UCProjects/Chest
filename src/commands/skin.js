@@ -1,6 +1,7 @@
 const Command = require('chat-commands/src/command');
 const { fetch, skins, artists } = require('../skins');
 const { get } = require('../cache');
+const getSafeLength = require('../util/safeLength');
 const disabled = require('../disabled');
 const random = require('../util/random');
 
@@ -17,7 +18,7 @@ function handler(msg, args = [], flags = {}) {
         return {
           embed: {
             title: `Artists (${artists.size})`,
-            description: description.substring(0, getSafeLength(description, 2000)),
+            description: description.substring(0, getSafeLength(description)),
           },
         };
       }
@@ -92,14 +93,6 @@ function handler(msg, args = [], flags = {}) {
       };
     });
   });
-}
-
-function getSafeLength(text = '', length = 2048, splitter = ',') {
-  let len = text.length;
-  while (len > length) {
-    len = text.lastIndexOf(splitter) - 1;
-  }
-  return len;
 }
 
 module.exports = new Command({
