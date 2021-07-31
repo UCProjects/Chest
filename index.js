@@ -4,6 +4,7 @@ const Discord = require('eris');
 const parseFlags = require('chat-commands/src/flags');
 const loadPrefixes = require('chat-commands/src/prefixes');
 const cache = require('./src/cache');
+const { get: getMode } = require('./src/mode');
 
 const prefixes = loadPrefixes(process.env.PREFIXES, ['@mention', 'card!', 'chest!', 'Card!', 'Chest!', 'c!', 'C!']);
 
@@ -39,7 +40,15 @@ connection.on('messageCreate', (msg) => {
 
   msg.prefix = prefix;
   msg.command = command;
-  msg.reply = (content, file) => connection.createMessage(msg.channel.id, content, file);
+  msg.reply = (content, file) => {
+    const mode = getMode(msg, flags);
+    if (mode !== 'normal') {
+      return connection.getDMChannel(msg.author.id)
+        .then(chan => chan.createMessage(content, file));
+    } else {
+      return connection.createMessage(msg.channel.id, content, file)
+    }
+  };
   msg.connection = connection;
   msg.mention = connection.user.mention;
 
