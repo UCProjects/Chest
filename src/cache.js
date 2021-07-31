@@ -1,6 +1,7 @@
 const undercards = require('./undercards');
 const { translate, load } = require('./lang');
 const { normalMode } = require('./lang/extend');
+const random = require('./util/random');
 
 const cards = new Map();
 
@@ -28,6 +29,11 @@ exports.card = (id) => cards.get(id);
   
 exports.all = () => [...cards.values()];
 
+exports.pick = (rarity = 'any', type = 'mix', baseIsCommon = true) => {
+  const subset = exports.all().filter((card) => validateRarity(card, rarity, baseIsCommon) && validateType(card, type));
+  return random(subset);
+};
+
 function getClosest(needle = '', directory = []) {
   directory.forEach(card => card.name = translate(`card-name-${card.id}`, 1));
   directory.sort((a, b) => a.name.length - b.name.length || a.name.localeCompare(b.name));
@@ -43,4 +49,34 @@ function getClosest(needle = '', directory = []) {
     };
   }
   return undefined;
+}
+
+function validateRarity({rarity: cardRarity = ''}, rarity = '', baseIsCommon = true) {
+  switch(rarity.toLowerCase()) {
+    case 'determination':
+    case 'dt': return cardRarity === 'DETERMINATION';
+    case 'legendary':
+    case 'legend': return cardRarity === 'LEGENDARY';
+    case 'epic': return cardRarity === 'EPIC';
+    case 'rare': return cardRarity === 'RARE'
+    case 'common': return cardRarity === 'COMMON' || baseIsCommon && cardRarity === 'BASE';
+    case 'base': return cardRarity === 'BASE';
+    case 'all':
+    case 'any': return cardRarity !== 'TOKEN';
+    default: return false;
+  }
+}
+
+function validateType({extension: cardType = ''}, type = '') {
+  switch(type.toLowerCase()) {
+    case 'deltarune':
+    case 'dr': return cardType === 'DELTARUNE';
+    case 'base':
+    case 'undertale':
+    case 'ut': return cardType === 'BASE';
+    case 'all':
+    case 'any':
+    case 'mix': return true;
+    default: return false;
+  }
 }

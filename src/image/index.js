@@ -4,6 +4,7 @@ const path = require('path');
 const card = require('./template');
 const deck = require('./deck');
 const buildStatus = require('./helper');
+const pack = require('./pack');
 
 // Build a card image (TODO: cache images)
 exports.card = (data) => {
@@ -44,6 +45,27 @@ exports.deck = (data) => {
     },
   })
     .catch(e => console.error('Failed to make deck', e));
+};
+exports.pack = (cards = []) => {
+  cards.forEach(buildStatus)
+  return htmlImage({
+    html: pack,
+    content: { cards },
+    puppeteerArgs: {
+      fullPage: false,
+    },
+    beforeScreenshot(page) {
+      return page.$eval('#pack', el => el.offsetHeight)
+        .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
+        .then(() => page.$$eval('.name', (e = []) => e.forEach(async (el) => {
+          while (el.scrollWidth > el.clientWidth && size-step > 7) {
+            size -= step;
+            el.style.fontSize = `${size}px`;
+          }
+        })))
+        .catch(console.error);
+    },
+  });
 };
 
 function cacheImage(buffer, card) {
