@@ -57,7 +57,9 @@ exports.pack = (cards = []) => {
     beforeScreenshot(page) {
       return page.$eval('#pack', el => el.offsetHeight)
         .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
-        .then(() => page.$$eval('.name', (e = []) => e.forEach(async (el) => {
+        .then(() => page.$$eval('.name', (e = []) => e.forEach((el) => {
+          const step = 0.5;
+          let size = 15;
           while (el.scrollWidth > el.clientWidth && size-step > 7) {
             size -= step;
             el.style.fontSize = `${size}px`;
