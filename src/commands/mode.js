@@ -10,15 +10,18 @@ module.exports = new Command({
   }],
   handler(msg, args, flags) {
     const add = this.flag('+', flags);
+    let ret;
     if (add) {
       set(msg, add);
-      return `Mode set: ${add}`;
+      ret = `Mode set: ${add}`;
     } else if (this.flag('-', flags)) {
       set(msg, false);
-      return 'Mode reset';
+      ret =  'Mode reset';
     } else {
-      return `Mode: ${get(msg, flags)}`;
+      ret = `Mode: ${get(msg, flags)}`;
     }
+    // Force it to reply in the current channel
+    return msg.channel.createMessage(ret);
   },
   disabled: (msg) => !msg.channel.permissionsOf || !msg.channel.permissionsOf(msg.author.id).has('manageRoles'),
 });
