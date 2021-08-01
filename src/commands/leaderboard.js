@@ -4,6 +4,8 @@ const disabled = require('../disabled');
 const floor = require('../util/floor');
 const { translate } = require('../lang');
 const undercards = require('../undercards');
+const paginator = require('../util/pagination');
+const arrayChunk = require('../util/arrayChunk');
 
 const config = new Configstore('robot-98');
 
@@ -36,21 +38,17 @@ function handler(msg, args = [], flags = {}) {
           const path = `leaderboard.${msg.author.id}`;
           const entries = config.get(path) || {};
           if (me) {
-            return getRegistered(leaderboard, entries);
+            return getRegistered(leaderboard, entries, { msg });
           }
           const user = findUser(leaderboard, needle);
           if (!user) return `* User \`${args.join(' ')}\` not found on leaderboard`;
           if (register) {
-            if (!entries[user.id] && Object.keys(entries).filter(_ => _ !== 'main').length >= 10) {
-              return '* Failed to register (limit 10 users)';
-            } else {
-              entries[user.id] = user.username;
-              if (this.flag('main', flags)) {
-                entries.main = user.id;
-              }
-              config.set(path, entries);
-              return `Registered ${user.username}`;
+            entries[user.id] = user.username;
+            if (this.flag('main', flags)) {
+              entries.main = user.id;
             }
+            config.set(path, entries);
+            return `Registered ${user.username}`;
           } else {
             if (entries[user.id]) {
               delete entries[user.id];
@@ -69,18 +67,20 @@ function handler(msg, args = [], flags = {}) {
       }
       if (me) {
         const entries = config.get(`leaderboard.${msg.author.id}`);
-        return getRegistered(leaderboard, entries, { main: this.flag('main', flags) });
+        return getRegistered(leaderboard, entries, { main: this.flag('main', flags), msg });
       } else if (needle) {
         return singleResult(findUser(leaderboard, needle)) ||
           `* User \`${args.join(' ')}\` not found`;
       } else {
-        return multiResult(leaderboard.slice(0, 10));
+        const page = !flags.page || Number.isNaN(flags.page) ? 1 : flags.page;
+        return multiResult(leaderboard, undefined, msg, page);
       }
     });
 }
 
 function getRegistered(leaderboard = [userdata], entries = {}, {
   main = false,
+  msg,
 } = {}) {
   if (main) {
     return singleResult(findUser(leaderboard, entries.main)) ||
@@ -91,7 +91,7 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
     .map(id => findUser(leaderboard, id))
     .filter(_ => _);
   if (users.length === 1) return singleResult(users[0]);
-  return multiResult(users, 'Registered users');
+  return multiResult(users, 'Registered users', msg);
 }
 
 function findUser(leaderboard = [userdata], needle) {
@@ -149,13 +149,18 @@ function singleResult(entry = userdata) {
     },
   };
 }
-function multiResult(entries = [userdata], title) {
-  return {
-    embed: {
-      title: title || translate('leaderboard-title'),
-      description: entries.map(entry => `${entry.rank + 1}. ${entry.username} #${entry.id}`).join('\n') || '* None',
+function multiResult(entries = [userdata], title, msg, page = 1) {
+  return paginator(msg, arrayChunk(entries), {
+    renderer(data = [], page, total) {
+      return {
+        embed: {
+          title: `${title || translate('leaderboard-title')} [${page}/${total}]`,
+          description: data.map(entry => `${entry.rank + 1}. ${entry.username} #${entry.id}`).join('\n') || '* None',
+        },
+      }
     },
-  };
+    page,
+  });
 }
 
 module.exports = new Command({

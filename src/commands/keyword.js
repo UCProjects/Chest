@@ -2,7 +2,8 @@ const Command = require('chat-commands/src/command');
 const disabled = require('../disabled');
 const { events, translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
-const getSafeLength = require('../util/safeLength');
+const paginator = require('../util/pagination');
+const arrayChunk = require('../util/arrayChunk');
 
 const cache = new Map();
 const prefix = 'kw-'
@@ -38,12 +39,16 @@ events.on('load', (data) => {
 
 function handler(msg, args = [], flags = {}) {
   const needle = args.join('-').toLowerCase();
-  if (!needle) return {
-    embed: {
-      title: 'Keywords',
-      description: getSafeLength([...cache.values()].map(({ name }) => name).join(', ')),
-    },
-  };
+  if (!needle) return paginator(msg, arrayChunk([...cache.values()].map(({ name }) => name), 20), {
+    renderer(keys, page, total) {
+      return {
+        embed: {
+          title: `Keywords [${page}/${total}]`,
+          description: keys.join('\n'),
+        },
+      };
+    }
+  });
   const { name, description } = cache.get(`${prefix}${needle}`) || {};
   if (!name) return `* Keyword \`${args.join(' ')}\` not found`;
   return {

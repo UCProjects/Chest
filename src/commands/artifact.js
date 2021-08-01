@@ -3,6 +3,8 @@ const Command = require('chat-commands/src/command');
 const disabled = require('../disabled');
 const { translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
+const paginator = require('../util/pagination');
+const arrayChunk = require('../util/arrayChunk');
 
 function handler(msg, args = [], flags = {}) {
   return fetch().catch((e) => {
@@ -12,14 +14,16 @@ function handler(msg, args = [], flags = {}) {
     if (error) return error;
     simpleMode();
     const needle = args.join(' ').toLowerCase();
-    if (!needle) return {
-      embed: {
-        title: 'Artifacts',
-        description: [...artifacts.values()]
-          .map(({ id }) => translate(`artifact-name-${id}`))
-          .join(', '),
-      }
-    };
+    if (!needle) return paginator(msg, arrayChunk([...artifacts.values()].map(({ id }) => translate(`artifact-name-${id}`))), {
+      renderer(arts, page, total) {
+        return {
+          embed: {
+            title: `Artifacts [${page}/${total}]`,
+            description: arts.join('\n'),
+          }
+        };
+      },
+    });
     const { id, cost, legendary, image, unavailable } = [...artifacts.values()]
       .find(({ name }) => name.toLowerCase() === needle) || {};
     if (!id) return `* ${args.join(' ')} not found`;

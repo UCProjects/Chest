@@ -1,9 +1,10 @@
 const Command = require('chat-commands/src/command');
 const { fetch, skins, artists } = require('../skins');
 const { get } = require('../cache');
-const getSafeLength = require('../util/safeLength');
 const disabled = require('../disabled');
 const random = require('../util/random');
+const paginator = require('../util/pagination');
+const chunker = require('../util/arrayChunk');
 
 function handler(msg, args = [], flags = {}) {
   return fetch().catch((e) => {
@@ -14,47 +15,40 @@ function handler(msg, args = [], flags = {}) {
     const needle = args.join(' ').toLowerCase();
     if (!needle) {
       if (msg.command.toLowerCase().startsWith('artist')) {
-        const description = [...artists.keys()].join(', ');
-        return {
-          embed: {
-            title: `Artists (${artists.size})`,
-            description: description.substring(0, getSafeLength(description)),
+        return paginator(msg, chunker([...artists.keys()]), {
+          renderer(data, page, total) {
+            return {
+              embed: {
+                title: `Artists (${artists.size}) [${page}/${total}]`,
+                description: data.join('\n'),
+              },
+            };
           },
-        };
+        });
       }
       const skin = random([...skins.values()]);
       return {
         embed: {
           title: `Skins (${skins.size})`,
           description: skin.name,
-          fields: [{
-            name: 'Card',
-            value: skin.cardName,
-            inline: true,
-          }, {
-            name: 'Cost',
-            value: `${skin.ucpCost} UCP${skin.unavailable ? ' (not for sale)' : ''}`,
-            inline: true,
-          }, {
-            name: 'Artist',
-            value: skin.authorName,
-          }],
-          image: {
-            url: `https://undercards.net/images/cards/${skin.image}.png`,
-          }
+          ...embedSkin(skin),
         },
       };
     }
     const artist = [...artists.keys()].find(name => name.toLowerCase() === needle || name.toLowerCase().startsWith(needle));
     if (artist) {
       const works = artists.get(artist);
-      const description = works.map(entry => entry.name).join(', ');
-      return {
-        embed: {
-          title: `${artist} skins (${works.length})`,
-          description: description.substring(0, getSafeLength(description)),
-        }
-      };
+      return paginator(msg, [...works], {
+        renderer(skin, page, total) {
+          return {
+            embed: {
+              title: `${artist} skins (${page}/${total})`,
+              description: skin.name,
+              ...embedSkin(skin),
+            },
+          };
+        },
+      });
     } else if (msg.command.toLowerCase().startsWith('artist')) {
       return `* Artist \`${args.join(' ')}\` not found`;
     }
@@ -63,36 +57,47 @@ function handler(msg, args = [], flags = {}) {
       return {
         embed: {
           title: skin.name,
-          fields: [{
-            name: 'Card',
-            value: skin.cardName,
-            inline: true,
-          }, {
-            name: 'Cost',
-            value: `${skin.ucpCost} UCP${skin.unavailable ? ' (not for sale)' : ''}`,
-            inline: true,
-          }, {
-            name: 'Artist',
-            value: skin.authorName,
-          }],
-          image: {
-            url: `https://undercards.net/images/cards/${skin.image}.png`,
-          },
+          ...embedSkin(skin),
         },
       };
     }
     return get(needle).then((card) => {
       if (!card) return `* Skin \`${args.join(' ')}\` not found`;
       const works = [...skins.values()].filter(skin => skin.cardId === card.id);
-      const description = works.map(entry => entry.name).join(', ');
-      return {
-        embed: {
-          title: `${card.name} Skins (${works.length})`,
-          description: description.substring(0, getSafeLength(description)),
+      return paginator(msg, [...works], {
+        renderer(skin, page, total) {
+          return {
+            embed: {
+              title: `${card.name} skins (${page}/${total})`,
+              description: skin.name,
+              ...embedSkin(skin),
+            },
+          };
         },
-      };
+        randomButton: works.length > 10,
+      });
     });
   });
+}
+
+function embedSkin(skin) {
+  return {
+    fields: [{
+      name: 'Card',
+      value: skin.cardName,
+      inline: true,
+    }, {
+      name: 'Cost',
+      value: `${skin.ucpCost} UCP${skin.unavailable ? ' (not for sale)' : ''}`,
+      inline: true,
+    }, {
+      name: 'Artist',
+      value: skin.authorName,
+    }],
+    image: {
+      url: `https://undercards.net/images/cards/${skin.image}.png`,
+    },
+  };
 }
 
 module.exports = new Command({
