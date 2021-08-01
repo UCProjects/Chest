@@ -76,6 +76,7 @@ function validateType({extension: cardType = ''}, type = '') {
     case 'ut': return cardType === 'BASE';
     case 'all':
     case 'any':
+    case 'shiny':
     case 'mix': return true;
     default: return false;
   }

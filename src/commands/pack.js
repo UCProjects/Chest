@@ -23,11 +23,32 @@ function rates() {
 
 function build(type = 'ut', size = 4) {
   const pack = [];
-  for (let i = 0, l = size * 5; pack.length < size && i < l; i++) { // Run up to 5x the pack size to meet the pack size limit
-    const card = pick(rates(), type, false);
-    if (card) {
-      pack.push(card);
-    }
+  if (typeof type !== 'string') return pack;
+  switch (type.toLowerCase()) {
+    case 'common':
+    case 'rare':
+    case 'epic':
+    case 'legendary':
+    case 'legend':
+    case 'super':
+      ['common', 'rare', 'epic', 'legendary'].forEach((rarity) => {
+        pack.push(pick(rarity, 'mix', false));
+      });
+      break;
+    case 'dt':
+    case 'determination':
+    case 'final':
+      ['rare', 'epic', 'legendary', 'determination'].forEach((rarity) => {
+        pack.push(pick(rarity, 'mix', false));
+      });
+      break;
+    default: 
+      for (let i = 0, l = size * 5; pack.length < size && i < l; i++) { // Run up to 5x the pack size to meet the pack size limit
+        const card = pick(rates(), type, false);
+        if (card) {
+          pack.push(card);
+        }
+      }
   }
   return pack;
 }
@@ -35,6 +56,7 @@ function build(type = 'ut', size = 4) {
 function handler(msg, args = [], flags = {}) {
   return load().then(() => {
     const pack = build(flags.type);
+    if (!pack.length) return `Invalid type: ${flags.type}`;
     normalMode();
     pack.forEach((card) => {
       card.name = translate(`card-name-${card.id}`, 1);
@@ -71,7 +93,7 @@ module.exports = new Command({
   flags: [{
     alias: ['type'],
     usage: 'mix',
-    description: '`UT` (default), `DR`, or `mix` (both)',
+    description: '`UT` (default), `DR`, or `mix` (both), `Super`, `Final`',
   }],
   handler,
   disabled,
