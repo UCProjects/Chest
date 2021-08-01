@@ -6,6 +6,7 @@ const { translate } = require('../lang');
 const { normalMode } = require('../lang/extend');
 const { deck: image } = require('../image');
 const disabled = require('../disabled');
+const parseFlags = require('chat-commands/src/flags');
 const random = require('../util/random');
 const array = require('../util/array');
 
@@ -33,7 +34,7 @@ function handler(msg, args = [], flags = {}) {
         },
         cards: generateDeck(soul, {
           ...flags,
-          include: array(this.flag('include', flags)),
+          include: array(getMultiFlags.call(this, msg, 'include')),
         }),
         artifacts: getArtifacts(),
       };
@@ -52,6 +53,16 @@ function handler(msg, args = [], flags = {}) {
         file: await image(data),
       });
     });
+}
+
+function getMultiFlags(msg, flag) {
+  const filtered = msg.content.replace(/<@!/g, '<@');
+
+  const {
+    flags = {},
+  } = parseFlags(filtered.substring(msg.prefix.length), false);
+
+  return this.flag(flag, flags, false);
 }
 
 module.exports = new Command({
