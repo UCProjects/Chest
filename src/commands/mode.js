@@ -3,6 +3,7 @@ const { get, set } = require('../mode');
 
 module.exports = new Command({
   alias: ['mode'],
+  description: 'Change the message mode for a channel',
   flags: [{
     alias: ['set', '+'],
   }, {
