@@ -82,7 +82,7 @@ module.exports = new Command({
   alias: ['quests', 'quest'],
   examples: [],
   usage: '[pass]',
-  description: '',
+  description: 'Lookup current quests and rewards',
   flags: [{
     alias: ['pass'],
     description: 'Show pass quests',
