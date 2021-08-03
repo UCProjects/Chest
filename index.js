@@ -41,6 +41,10 @@ connection.on('messageCreate', (msg) => {
   msg.prefix = prefix;
   msg.command = command;
   msg.reply = (content, file) => {
+    if (content.file && !file) {
+      file = content.file;
+      delete content.file;
+    }
     const mode = getMode(msg, flags);
     if (mode !== 'normal') {
       return connection.getDMChannel(msg.author.id)
@@ -52,9 +56,13 @@ connection.on('messageCreate', (msg) => {
   msg.connection = connection;
   msg.mention = connection.user.mention;
 
-  Promise.resolve(commands.get(command.toLowerCase()))
+  Promise.resolve(flags.help ? commands.get('help') : commands.get(command.toLowerCase()))
     .then((command) => {
       if (!command || !command.enabled(msg) && !bypass(msg, flags)) return undefined;
+      if (flags.help) {
+        if (msg.command) args.unshift(msg.command);
+        msg.command = 'help';
+      }
       return command.handle(msg, args, flags);
     })
     .then((response) => {
