@@ -1,3 +1,5 @@
+const Eris = require('eris');
+const Endpoints = require('eris/lib/rest/Endpoints');
 const randomNumber = require('./randomNumber');
 
 // Pagination. Listens to emotes/ and unregisters after X time. Register fixed data sets, and a renderer.
@@ -5,11 +7,12 @@ const actions = ['⏮️', '⬅️', '➡️', '⏭️'];
 const RANDOM = '🔀';
 const events = ['messageReactionAdd', 'messageReactionRemove'];
 const minute = 60000;
-module.exports = (msg, data = [], {
+module.exports = async (msg, data = [], {
   renderer = (data, current, total, ...args) => '',
   timeout = 60,
   page = 1,
   args = [],
+  navButtons = true,
   randomButton = false,
 }) => {
   if (!Array.isArray(data)) return;
@@ -20,14 +23,17 @@ module.exports = (msg, data = [], {
     page = Math.max(Math.min(page, data.length), 1) - 1;
   }
   function render() {
-    return renderer(data[page], page + 1, data.length, ...args);
+    return Promise.resolve().then(() => renderer(data[page], page + 1, data.length, ...args));
   }
   const connection = msg.connection;
-  return msg.reply(render())
+  return msg.reply(await render())
     .then((message) => {
       if (data.length) {
-        addEmotes(message, randomButton);
-        function listener(response, emoji, user) {
+        addEmotes(message, {
+          nav: navButtons,
+          random: randomButton,
+        });
+        async function listener(response, emoji, user) {
           if ((user.id || user) === connection.user.id || response.id !== message.id) return;
           emoji = emoji.id ? `${emoji.name}:${emoji.id}` : emoji.name;
           const currentPage = page;
@@ -50,7 +56,7 @@ module.exports = (msg, data = [], {
             default: return;
           }
           if (page === currentPage) return;
-          message.edit(render());
+          message.edit(await render());
         }
         events.forEach(ev => connection.on(ev, listener));
         setTimeout(() => events.forEach(ev => connection.off(ev, listener)), timeout * minute);
@@ -60,7 +66,10 @@ module.exports = (msg, data = [], {
     });
 };
 
-function addEmotes(message, randomButton = false) {
-  actions.forEach(a => message.addReaction(a));
-  if (randomButton) message.addReaction(RANDOM);
+function addEmotes(message, {
+  nav = true,
+  random = false,
+}) {
+  if (nav) actions.forEach(a => message.addReaction(a));
+  if (random) message.addReaction(RANDOM);
 }
