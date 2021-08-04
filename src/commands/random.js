@@ -14,17 +14,17 @@ function handler(msg, [filter] = [], flags = {}) {
     const card = random(cards);
     card.name = translate(`card-name-${card.id}`, 1);
     card.description = translate(`card-${card.id}`);
-    return card
-  }).then(image)
-    .then((results) => msg.reply({
+    return image(card);
+  }).then((results) => ({
       embed: {
         image: {
           url: 'attachment://card.png',
         },
-      }
-    }, {
-      name: 'card.png',
-      file: results,
+      },
+      file: {
+        name: 'card.png',
+        file: results,
+      },
     }));
 }
 

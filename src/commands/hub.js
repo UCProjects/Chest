@@ -66,7 +66,7 @@ async function response(msg, deck) {
   data.cards.forEach(card => card.name = translate(`card-name-${card.id}`, 1));
   data.artifacts.forEach(art => art.name = translate(`artifact-name-${art.id}`));
 
-  return msg.reply({
+  return {
     embed: {
       author: {
         name: deck.owner.username,
@@ -95,10 +95,11 @@ async function response(msg, deck) {
         url: 'attachment://deck.png',
       },
     },
-  }, {
-    name: 'deck.png',
-    file: await image(data),
-  });
+    file: {
+      name: 'deck.png',
+      file: await image(data),
+    },
+  };
 }
 
 module.exports = new Command({

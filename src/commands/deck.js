@@ -39,7 +39,7 @@ function handler(msg, args = [], flags = {}) {
         artifacts: getArtifacts(),
       };
 
-      return msg.reply({
+      return {
         embed: {
           title: `${data.soul.name} Deck`,
           description: deckCode(data),
@@ -48,10 +48,11 @@ function handler(msg, args = [], flags = {}) {
             url: 'attachment://deck.png',
           },
         },
-      }, {
-        name: 'deck.png',
-        file: await image(data),
-      });
+        file: {
+          name: 'deck.png',
+          file: await image(data),
+        },
+      };
     });
 }
 

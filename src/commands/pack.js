@@ -65,7 +65,7 @@ function handler(msg, args = [], flags = {}) {
     return image(pack);
   }).then((result) => {
     if (result instanceof Buffer) {
-      return msg.reply({
+      return {
         embed: {
           image: {
             url: 'attachment://pack.png',
@@ -74,10 +74,11 @@ function handler(msg, args = [], flags = {}) {
         message_reference: {
           message_id: msg.id,
         },
-      }, {
-        name: 'pack.png',
-        file: result,
-      });
+        file: {
+          name: 'pack.png',
+          file: result,
+        },
+      };
     }
     return result;
   });

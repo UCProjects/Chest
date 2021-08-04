@@ -14,10 +14,9 @@ function handler(msg, args = [], flags = {}) {
       } else {
         return `* Card \`${cardName}\` not found`
       }
-    })
-    .then((results) => {
+    }).then((results) => {
       if (results instanceof Buffer) {
-        return msg.reply({
+        return {
           embed: {
             image: {
               url: 'attachment://card.png',
@@ -25,11 +24,12 @@ function handler(msg, args = [], flags = {}) {
             footer: {
               // text: 'Sponsored by: Your name here!',
             },
-          }
-        }, {
-          name: 'card.png',
-          file: results,
-        });
+          },
+          file: {
+            name: 'card.png',
+            file: results,
+          },
+        };
       }
       return results;
     });
