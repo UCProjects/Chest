@@ -8,6 +8,8 @@ const { translate } = require('../lang');
 const { simpleMode, normalMode } = require('../lang/extend');
 const disabled = require('../disabled');
 const random = require('../util/random');
+const paginator = require('../util/pagination');
+const arrayChunk = require('../util/arrayChunk');
 
 function handler(msg, args = [], flags = {}) {
   return Promise.all([loadArtifacts(), loadHub()])
@@ -24,14 +26,18 @@ function handler(msg, args = [], flags = {}) {
         validate(type, deck.archetype) &&
         validate(author, deck.owner.username));
 
-      const list = flags.list ? (flags.list === true ? 5 : Math.max(Math.min(10, Number(flags.list)), 1)) : false;
-      if (list || (decks.length > 1 && (author && author !== true || needle))) {
-        return {
-          embed: {
-            title: `Hub Decks (${decks.length})`,
-            description: decks.slice(0, list || 5).map(deck => `${deck.name} - ${deck.owner.username}`).join('\n'),
+      if (flags.list || (decks.length > 1 && (needle || author && author !== true))) {
+        return paginator(msg, arrayChunk(decks.map(deck => `${deck.name} - ${deck.owner.username}`)), {
+          renderer(decks = [], page, total) {
+            if (!total) return '* No deck found';
+            return {
+              embed: {
+                title: `Hub Decks (${page}/${total})`,
+                description: decks.join('\n'),
+              },
+            };
           },
-        };
+        });
       }
 
       // Otherwise show a random one...?
@@ -125,7 +131,7 @@ module.exports = new Command({
     description: 'Orders by date instead of rank',
   }, {
     alias: ['list'],
-    description: 'Shows the first X (or 5 if omitted) in a list. (Limit 1-10)',
+    description: 'Forces a list to be shown',
   }],
   disabled: (msg) => !process.env.UC_LOGIN || disabled(msg),
   handler,
