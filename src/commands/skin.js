@@ -2,9 +2,9 @@ const Command = require('chat-commands/src/command');
 const { fetch, skins, artists } = require('../skins');
 const { get } = require('../cache');
 const disabled = require('../disabled');
-const random = require('../util/random');
 const paginator = require('../util/pagination');
 const chunker = require('../util/arrayChunk');
+const randomNumber = require('../util/randomNumber');
 
 function handler(msg, args = [], flags = {}) {
   return fetch().catch((e) => {
@@ -29,13 +29,14 @@ function handler(msg, args = [], flags = {}) {
       return paginator(msg, [...skins.values()], {
         renderer(skin, page, total) {
           return {
-            embed: { // Pagify
+            embed: {
               title: `Skins (${total})`,
               description: skin.name,
               ...embedSkin(skin),
             },
           };
         },
+        page: randomNumber(skins.values()) + 1,
         navButtons: false,
         randomButton: true,
       });
