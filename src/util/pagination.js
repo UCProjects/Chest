@@ -1,5 +1,3 @@
-const Eris = require('eris');
-const Endpoints = require('eris/lib/rest/Endpoints');
 const randomNumber = require('./randomNumber');
 
 // Pagination. Listens to emotes/ and unregisters after X time. Register fixed data sets, and a renderer.
@@ -32,6 +30,7 @@ module.exports = async (msg, data = [], {
         addEmotes(message, {
           nav: navButtons,
           random: randomButton,
+          jump: navButtons && data.length > 2,
         });
         async function listener(response, emoji, user) {
           if ((user.id || user) === connection.user.id || response.id !== message.id) return;
@@ -51,7 +50,9 @@ module.exports = async (msg, data = [], {
               page = data.length - 1;
               break;
             case RANDOM:
-              page = randomNumber(data.length);
+              do {
+                page = randomNumber(data.length);
+              } while (page > 1 && page === currentPage);
               break;
             default: return;
           }
@@ -69,7 +70,8 @@ module.exports = async (msg, data = [], {
 function addEmotes(message, {
   nav = true,
   random = false,
+  jump = false,
 }) {
-  if (nav) actions.forEach(a => message.addReaction(a));
+  if (nav) actions.forEach(a => (jump || ['⬅️', '➡️'].includes(a)) && message.addReaction(a));
   if (random) message.addReaction(RANDOM);
 }
