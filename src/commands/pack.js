@@ -24,6 +24,7 @@ function rates() {
 function build(type = 'ut', size = 4) {
   const pack = [];
   if (typeof type !== 'string') return pack;
+  let shiny = false;
   switch (type.toLowerCase()) {
     case 'common':
     case 'rare':
@@ -42,10 +43,13 @@ function build(type = 'ut', size = 4) {
         pack.push(pick(rarity, 'mix', false));
       });
       break;
+    case 'shiny':
+      shiny = true;
     default: 
       for (let i = 0, l = size * 5; pack.length < size && i < l; i++) { // Run up to 5x the pack size to meet the pack size limit
         const card = pick(rates(), type, false);
         if (card) {
+          card.shiny = shiny || random(100) < 5;
           pack.push(card);
         }
       }

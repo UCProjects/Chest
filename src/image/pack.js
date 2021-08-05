@@ -12,6 +12,7 @@ module.exports = `<html>
     .black-bg { background-color: rgb(0, 0, 0); background-clip: padding-box; }
     .center-v { display: flex; align-items: center; }
     .center-h { display: flex; justify-content: center; }
+    .shiny { --border: rgb(255, 187, 0); }
     .card { border: 2px solid var(--border); color: var(--font); width: 162px; overflow: hidden; box-sizing: border-box; user-select: none; -moz-user-select: none; -webkit-user-select: none; }
     .card * { margin: 0; box-sizing: border-box; padding: 0; }
     .top, .bottom { height: 30px; }
@@ -54,7 +55,7 @@ module.exports = `<html>
 <body>
   <div id="pack">
     {{#each cards}}
-      <div class="card">
+      <div class="card {{#if shiny}}shiny{{/if}}">
         <div class="top row">
           <div class="name black-bg center-v {{#if soul}}{{soul.name}}{{/if}}">{{name}}</div>
           <div class="cost black-bg center-v center-h">{{cost}}</div>
