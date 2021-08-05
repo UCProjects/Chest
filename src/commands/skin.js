@@ -26,14 +26,19 @@ function handler(msg, args = [], flags = {}) {
           },
         });
       }
-      const skin = random([...skins.values()]);
-      return {
-        embed: {
-          title: `Skins (${skins.size})`,
-          description: skin.name,
-          ...embedSkin(skin),
+      return paginator(msg, [...skins.values()], {
+        renderer(skin, page, total) {
+          return {
+            embed: { // Pagify
+              title: `Skins (${total})`,
+              description: skin.name,
+              ...embedSkin(skin),
+            },
+          };
         },
-      };
+        navButtons: false,
+        randomButton: true,
+      });
     }
     const artist = [...artists.keys()].find(name => name.toLowerCase() === needle || name.toLowerCase().startsWith(needle));
     if (artist) {
@@ -64,7 +69,7 @@ function handler(msg, args = [], flags = {}) {
     return get(needle).then((card) => {
       if (!card) return `* Skin \`${args.join(' ')}\` not found`;
       const works = [...skins.values()].filter(skin => skin.cardId === card.id);
-      return paginator(msg, [...works], {
+      return paginator(msg, works, {
         renderer(skin, page, total) {
           return {
             embed: {

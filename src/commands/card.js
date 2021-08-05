@@ -21,9 +21,6 @@ function handler(msg, args = [], flags = {}) {
             image: {
               url: 'attachment://card.png',
             },
-            footer: {
-              // text: 'Sponsored by: Your name here!',
-            },
           },
           file: {
             name: 'card.png',

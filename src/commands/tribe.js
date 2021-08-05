@@ -3,6 +3,8 @@ const { all: allCards } = require('../cache');
 const disabled = require('../disabled');
 const { events, translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
+const paginator = require('../util/pagination');
+const arrayChunk = require('../util/arrayChunk');
 
 const cache = new Map();
 const prefix = 'tribe-'
@@ -20,12 +22,16 @@ events.on('load', (data) => {
 
 function handler(msg, args = [], flags = {}) {
   const needle = args.join(' ').toLowerCase();
-  if (!needle) return {
-    embed: {
-      title: 'Tribes',
-      description: [...cache.values()].join(', '),
-    }
-  };
+  if (!needle) return paginator(msg, arrayChunk([...cache.values()]), {
+    renderer(tribes, page, total) {
+      return {
+        embed: {
+          title: `Tribes (${page}/${total})`,
+          description: tribes.join('\n'),
+        }
+      };
+    },
+  });
 
   const key = [...cache.keys()]
     .find((key) => {
@@ -63,7 +69,7 @@ function handler(msg, args = [], flags = {}) {
 
 module.exports = new Command({
   title: '',
-  alias: ['tribe'],
+  alias: ['tribe', 'tribes'],
   examples: [],
   usage: '[tribe]',
   description: 'Show the cards in a tribe',
