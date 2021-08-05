@@ -55,7 +55,7 @@ function build(type = 'ut', size = 4) {
 
 function handler(msg, args = [], flags = {}) {
   return load().then(() => {
-    const pack = build(flags.type);
+    const pack = build(flags.type || args[0]);
     if (!pack.length) return `Invalid type: ${flags.type}`;
     normalMode();
     pack.forEach((card) => {
@@ -89,7 +89,7 @@ module.exports = new Command({
   title: '',
   alias: ['pack', 'open'],
   examples: [],
-  usage: '',
+  usage: '[type]',
   description: 'Simulate an undercards pack opening',
   flags: [{
     alias: ['type'],
