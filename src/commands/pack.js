@@ -75,9 +75,6 @@ function handler(msg, args = [], flags = {}) {
             url: 'attachment://pack.png',
           },
         },
-        message_reference: {
-          message_id: msg.id,
-        },
         file: {
           name: 'pack.png',
           file: result,
