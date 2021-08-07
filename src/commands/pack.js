@@ -47,7 +47,7 @@ function build(type = 'ut', size = 4) {
       shiny = true;
     default: 
       for (let i = 0, l = size * 5; pack.length < size && i < l; i++) { // Run up to 5x the pack size to meet the pack size limit
-        const card = pick(rates(), type, false);
+        const card = pick(rates(), type, shiny);
         if (card) {
           card.shiny = shiny || random(100) < 5;
           pack.push(card);
@@ -95,7 +95,7 @@ module.exports = new Command({
   flags: [{
     alias: ['type'],
     usage: 'mix',
-    description: '`UT` (default), `DR`, or `mix` (both), `Super`, `Final`',
+    description: '`UT` (default), `DR`, `mix` (both), `Shiny`, `Super`, `Final`',
   }],
   handler,
   disabled,
