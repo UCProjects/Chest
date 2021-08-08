@@ -93,7 +93,7 @@ module.exports = new Command({
   alias: ['collection', 'chest'],
   examples: [],
   usage: '',
-  description: 'Shows your pack collection\n\n* `Final`, `Super` and `Shiny` packs do not add cards to the collection',
+  description: 'Shows your pack collection\n\n* `Final`, `Super` and `Shiny` packs do not add cards to the collection.',
   flags: [],
   disabled,
   handler,

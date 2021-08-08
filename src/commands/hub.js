@@ -113,7 +113,7 @@ module.exports = new Command({
   alias: ['hub'],
   examples: [],
   usage: '[deck name]',
-  description: 'Find a deck from the hub.',
+  description: 'Find a deck from the hub',
   flags: [{
     alias: ['author', 'owner', 'user'],
     description: 'Limit results to provided author(s)',

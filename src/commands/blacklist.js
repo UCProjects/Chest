@@ -6,7 +6,7 @@ module.exports = new Command({
   alias: ['blacklist', 'bl'],
   examples: [],
   usage: '',
-  description: 'Command blacklist.\nAny channel in the blacklist disables most bot commands.',
+  description: 'Command blacklist\nAny channel in the blacklist disables most bot commands.',
   flags: [{
     alias: ['add']
   }, {

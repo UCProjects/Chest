@@ -6,7 +6,7 @@ module.exports = new Command({
   alias: ['whitelist', 'wl'],
   examples: [],
   usage: '',
-  description: 'Command whitelist.\nAny channel not on the whitelist disables most bot commands.',
+  description: 'Command whitelist\nAny channel not on the whitelist disables most bot commands.',
   flags: [{
     alias: ['add']
   }, {
