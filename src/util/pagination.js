@@ -26,7 +26,7 @@ module.exports = async (msg, data = [], {
   const connection = msg.connection;
   return msg.reply(await render())
     .then((message) => {
-      if (data.length) {
+      if (data.length > 1) {
         addEmotes(message, {
           nav: navButtons,
           random: randomButton,
