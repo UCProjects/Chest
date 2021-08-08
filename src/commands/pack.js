@@ -6,6 +6,7 @@ const { normalMode } = require('../lang/extend');
 const random = require('../util/randomNumber');
 const { translate } = require('../lang');
 const { add: addCards } = require('../collection');
+const { super: legendary, final } = require('../util/rarities');
 
 // Basically a crippled version of draftbot
 function rates() {
@@ -34,14 +35,14 @@ function build(msg, type = 'ut', size = 4) {
     case 'legendary':
     case 'legend':
     case 'super':
-      ['common', 'rare', 'epic', 'legendary'].forEach((rarity) => {
+      legendary.forEach((rarity) => {
         pack.push(pick(rarity, 'mix', false));
       });
       break;
     case 'dt':
     case 'determination':
     case 'final':
-      ['rare', 'epic', 'legendary', 'determination'].forEach((rarity) => {
+      final.forEach((rarity) => {
         pack.push(pick(rarity, 'mix', false));
       });
       break;
