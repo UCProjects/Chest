@@ -28,11 +28,14 @@ function handler(msg, [user = ''] = [], flags = {}) {
   const chest = unknownUser ? get(searchUser) : get(activeUser);
 
   return load().then(() => {
-    Object.keys(chest).forEach((id) => {
+    const packs = Object.keys(chest).reduce((sum, id) => {
       const card = getCard(parseInt(id, 10));
-      if (!card) return console.log('Missing card:', id);
-      const { rarity, extension } = card;
       const entry = chest[id];
+      if (!card) {
+        console.log('Missing card:', id)
+        return sum;
+      }
+      const { rarity, extension } = card;
 
       collection[rarity].push({
         ...card,
@@ -43,7 +46,8 @@ function handler(msg, [user = ''] = [], flags = {}) {
       getCount(rarity).merge(entry);
       getCount(extension).merge(entry);
       extensions.add(extension);
-    });
+      return sum + entry.total;
+    }, 0) / 4;
 
     const arr = [''];
     rarities.forEach((rarity) => {
@@ -107,6 +111,7 @@ function handler(msg, [user = ''] = [], flags = {}) {
           });
         }
         if (!fields.length) delete embed.fields;
+        else embed.description += `Packs: ${packs}\n`;
         return { embed };
       }
     });
