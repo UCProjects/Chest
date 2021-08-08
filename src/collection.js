@@ -42,8 +42,8 @@ exports.add = function add(user = {
     const type = card.shiny ? 's' : 'r';
     const key = `collection.${user.id}.${card.id}.${type}`;
 
-    const value = config.get(key) || 0;
-    const total = config.get(`${key}T`) || 0;
+    const value = set[key] || config.get(key) || 0;
+    const total = set[`${key}T`] || config.get(`${key}T`) || 0;
     
     set[key] = value + 1;
     set[`${key}T`] = total + 1;
