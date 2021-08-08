@@ -18,8 +18,9 @@ function handler(msg, [user = ''] = [], flags = {}) {
 
   const searchUser = user.match(/<@\d+>/) ? user.substring(2, user.length - 1) : user;
   const activeUser = (msg.channel.guild && msg.channel.guild.members.get(searchUser)) || msg._client.users.get(searchUser) || msg.author;
-  const chest = get(activeUser);
-  const otherUser = activeUser.id !== msg.author.id;
+  const isAuthor = activeUser.id === msg.author.id;
+  const unknownUser = user && activeUser.id !== searchUser;
+  const chest = unknownUser ? get(searchUser) : get(activeUser);
 
   return load().then(() => {
     Object.keys(chest).forEach((id) => {
@@ -49,8 +50,9 @@ function handler(msg, [user = ''] = [], flags = {}) {
           value: '',
           inline: true,
         }];
+        const user = unknownUser ? `*${searchUser}*` : (!isAuthor ? activeUser.nick || activeUser.username : '');
         const embed = {
-          title: `${translate('decks-your-collection')}${otherUser ? ` - ${activeUser.nick || activeUser.username}` : ''}`,
+          title: `${translate('decks-your-collection')}${user ? `- ${user}` : ''}`,
           color: colors.BASE,
           fields,
         };
