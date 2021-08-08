@@ -50,6 +50,9 @@ connection.on('messageCreate', (msg) => {
       return connection.getDMChannel(msg.author.id)
         .then(chan => chan.createMessage(content, file));
     } else {
+      if (typeof content === 'string') {
+        content = { content };
+      }
       if (!content.message_reference) {
         content.message_reference = {
           message_id: msg.id,
