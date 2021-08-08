@@ -168,7 +168,7 @@ module.exports = new Command({
   alias: ['leaderboard', 'lb', 'rank'],
   examples: [],
   usage: '[<me|main>|username]',
-  description: '',
+  description: 'Lookup current leaderboard',
   flags: [{
     alias: ['register', 'r', '+', 'save'],
     description: 'Store a user on your discord',
