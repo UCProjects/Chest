@@ -5,6 +5,7 @@ const { load, pick } = require('../cache');
 const { normalMode } = require('../lang/extend');
 const random = require('../util/randomNumber');
 const { translate } = require('../lang');
+const { add: addCards } = require('../collection');
 
 // Basically a crippled version of draftbot
 function rates() {
@@ -21,10 +22,11 @@ function rates() {
   return 'common';
 }
 
-function build(type = 'ut', size = 4) {
+function build(msg, type = 'ut', size = 4) {
   const pack = [];
   if (typeof type !== 'string') return pack;
   let shiny = false;
+  let collect = false;
   switch (type.toLowerCase()) {
     case 'common':
     case 'rare':
@@ -45,7 +47,8 @@ function build(type = 'ut', size = 4) {
       break;
     case 'shiny':
       shiny = true;
-    default: 
+    default:
+      collect = !shiny;
       for (let i = 0, l = size * 5; pack.length < size && i < l; i++) { // Run up to 5x the pack size to meet the pack size limit
         const card = pick(rates(), type, shiny);
         if (card) {
@@ -54,12 +57,15 @@ function build(type = 'ut', size = 4) {
         }
       }
   }
+  if (collect) {
+    addCards(msg.author, pack);
+  }
   return pack;
 }
 
 function handler(msg, args = [], flags = {}) {
   return load().then(() => {
-    const pack = build(flags.type || args[0]);
+    const pack = build(msg, flags.type || args[0]);
     if (!pack.length) return `Invalid type: ${flags.type}`;
     normalMode();
     pack.forEach((card) => {

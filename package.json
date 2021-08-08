@@ -15,6 +15,7 @@
     "axios": "^0.21.1",
     "banana-i18n": "^2.0.0",
     "chat-commands": "^0.6.0",
+    "conf": "^10.0.1",
     "configstore": "^5.0.1",
     "dotenv": "^8.2.0",
     "eris": "^0.14.0",
