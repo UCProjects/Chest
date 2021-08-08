@@ -91,8 +91,12 @@ function handler(msg, [user = ''] = [], flags = {}) {
 module.exports = new Command({
   title: 'Your collection',
   alias: ['collection', 'chest'],
-  examples: [],
-  usage: '',
+  examples: [
+    '`<command>` - view your collection',
+    '`<command> @user` - view User\'s collection',
+    '`<command> 123456789` - view User\'s collection',
+  ],
+  usage: '[user]',
   description: 'Shows your pack collection\n\n* `Final`, `Super` and `Shiny` packs do not add cards to the collection.',
   flags: [],
   disabled,
