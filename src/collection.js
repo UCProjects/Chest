@@ -44,7 +44,7 @@ exports.add = function add(user = {
 
     const value = set[key] || config.get(key) || 0;
     const total = set[`${key}T`] || config.get(`${key}T`) || 0;
-    
+
     set[key] = value + 1;
     set[`${key}T`] = total + 1;
   });
