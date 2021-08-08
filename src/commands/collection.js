@@ -50,9 +50,10 @@ function handler(msg, [user = ''] = [], flags = {}) {
           value: '',
           inline: true,
         }];
-        const user = unknownUser ? `*${searchUser}*` : (!isAuthor ? activeUser.nick || activeUser.username : '');
+        const user = unknownUser ? `*${searchUser}*` : (!isAuthor ? activeUser.mention : '');
         const embed = {
-          title: `${translate('decks-your-collection')}${user ? ` - ${user}` : ''}`,
+          title: translate('decks-your-collection'),
+          description: user ? `User: ${user}\n` : '',
           color: colors.BASE,
           fields,
         };
@@ -68,7 +69,7 @@ function handler(msg, [user = ''] = [], flags = {}) {
             });
           });
           if (!fields.length) {
-            embed.description = '* No collection yet! Open some packs to get started.';
+            embed.description += '* No collection yet! Open a `pack` to get started.\n';
           }
         } else {
           const { rarity } = data[0];
