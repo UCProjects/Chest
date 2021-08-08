@@ -8,6 +8,19 @@ const { translate } = require('../lang');
 const { add: addCards } = require('../collection');
 const { super: legendary, final } = require('../util/rarities');
 
+
+const processing = {};
+function limiter(msg, ...rest) {
+  const id = msg.author.id;
+  if (processing[id]) return undefined;
+  const ret = handler.call(this, msg, ...rest).then((ret) => {
+    delete processing[id];
+    return ret;
+  });
+  processing[id] = ret;
+  return ret;
+}
+
 // Basically a crippled version of draftbot
 function rates() {
   const needle = random(10000);
@@ -104,6 +117,6 @@ module.exports = new Command({
     usage: 'mix',
     description: '`UT` (default), `DR`, `mix` (both), `Shiny`, `Super`, `Final`',
   }],
-  handler,
+  handler: limiter,
   disabled,
 });
