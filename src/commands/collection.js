@@ -52,7 +52,7 @@ function handler(msg, [user = ''] = [], flags = {}) {
         }];
         const user = unknownUser ? `*${searchUser}*` : (!isAuthor ? activeUser.nick || activeUser.username : '');
         const embed = {
-          title: `${translate('decks-your-collection')}${user ? `- ${user}` : ''}`,
+          title: `${translate('decks-your-collection')}${user ? ` - ${user}` : ''}`,
           color: colors.BASE,
           fields,
         };
