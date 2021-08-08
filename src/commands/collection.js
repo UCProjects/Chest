@@ -4,22 +4,16 @@ const { translate } = require('../lang');
 const { simpleMode } = require('../lang/extend');
 const paginator = require('../util/pagination');
 const arrayChunk = require('../util/arrayChunk');
-const { get } = require('../collection');
+const { CardEntry, get } = require('../collection');
 const { load, card: getCard } = require('../cache');
 const { generic: rarities, colors } = require('../util/rarities');
-
-const subtotals = {
-  total: 0,
-  regular: 0,
-  shiny: 0,
-};
 
 function handler(msg, args = [], flags = {}) {
   const collection = {};
   const counts = {};
   rarities.forEach((rarity) => {
     collection[rarity] = [];
-    counts[rarity] = { ...subtotals };
+    counts[rarity] = new CardEntry();
   });
 
   const chest = get(msg.author);
@@ -29,20 +23,15 @@ function handler(msg, args = [], flags = {}) {
       const card = getCard(parseInt(id, 10));
       if (!card) return console.log('Missing card:', id);
       const { rarity } = card;
-      const { r: regular = 0, s: shiny = 0 } = chest[id];
+      const entry = chest[id];
 
       collection[rarity].push({
         ...card,
-        name: translate(`card-name-${card.id}`, 1),
-        //description: translate(`card-${card.id}`),
-        counts: {
-          regular,
-          shiny,
-        },
+        // name: translate(`card-name-${card.id}`, 1),
+        // description: translate(`card-${card.id}`),
+        counts: entry,
       });
-      counts[rarity].regular += regular;
-      counts[rarity].shiny += shiny;
-      counts[rarity].total += regular + shiny;
+      counts[rarity].merge(entry);
     });
 
     const arr = [''];
@@ -51,6 +40,7 @@ function handler(msg, args = [], flags = {}) {
     });
     return paginator(msg, arr, {
       renderer(data, page, total) {
+        simpleMode();
         const fields = [{
           name: '',
           value: '',
@@ -64,11 +54,11 @@ function handler(msg, args = [], flags = {}) {
         fields.shift();
         if (page === 1) {
           rarities.forEach((rarity) => {
-            const { total, regular, shiny } = counts[rarity];
-            if (!total) return;
+            const entry = counts[rarity];
+            if (!entry.total) return;
             fields.push({
-              name: `${translate(`rarity-${rarity.toLowerCase()}`)} (${total})`,
-              value: getText(shiny, regular),
+              name: `${translate(`rarity-${rarity.toLowerCase()}`)} (${entry.total})`,
+              value: `${entry}`,
               inline: true,
             });
           });
@@ -80,10 +70,10 @@ function handler(msg, args = [], flags = {}) {
           embed.title += `: ${rarity} [${page - 1}/${total - 1}]`;
           embed.color = colors[rarity];
           data.forEach((card) => {
-            const { name, counts: { shiny, regular } } = card;
+            const { id, counts } = card;
             fields.push({
-              name: name,
-              value: getText(shiny, regular),
+              name: translate(`card-name-${id}`, 1),
+              value: `${counts}`,
               inline: true,
             })
           });
@@ -95,23 +85,12 @@ function handler(msg, args = [], flags = {}) {
   });
 }
 
-function getText(shiny, normal) {
-  const ret = [];
-  if (shiny) {
-    ret.push(`Shiny: ${shiny}`);
-  }
-  if (normal) {
-    ret.push(`Normal: ${normal}`);
-  }
-  return ret.join('\n');
-}
-
 module.exports = new Command({
   title: 'Your collection',
   alias: ['collection', 'chest'],
   examples: [],
   usage: '',
-  description: 'Shows your pack collection.\n\n* `Final`, `Super` and `Shiny` packs do not add cards to the collection',
+  description: 'Shows your pack collection\n\n* `Final`, `Super` and `Shiny` packs do not add cards to the collection',
   flags: [],
   disabled,
   handler,
