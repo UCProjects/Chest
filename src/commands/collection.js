@@ -11,10 +11,15 @@ const { generic: rarities, colors } = require('../util/rarities');
 function handler(msg, [user = ''] = [], flags = {}) {
   const collection = {};
   const counts = {};
+  const extensions = new Set();
   rarities.forEach((rarity) => {
     collection[rarity] = [];
-    counts[rarity] = new CardEntry();
   });
+  
+  function getCount(key) {
+    if (!counts[key]) counts[key] = new CardEntry();
+    return counts[key];
+  }
 
   const searchUser = user.match(/<@\d+>/) ? user.substring(2, user.length - 1) : user;
   const activeUser = (msg.channel.guild && msg.channel.guild.members.get(searchUser)) || msg._client.users.get(searchUser) || msg.author;
@@ -26,7 +31,7 @@ function handler(msg, [user = ''] = [], flags = {}) {
     Object.keys(chest).forEach((id) => {
       const card = getCard(parseInt(id, 10));
       if (!card) return console.log('Missing card:', id);
-      const { rarity } = card;
+      const { rarity, extension } = card;
       const entry = chest[id];
 
       collection[rarity].push({
@@ -35,7 +40,9 @@ function handler(msg, [user = ''] = [], flags = {}) {
         // description: translate(`card-${card.id}`),
         counts: entry,
       });
-      counts[rarity].merge(entry);
+      getCount(rarity).merge(entry);
+      getCount(extension).merge(entry);
+      extensions.add(extension);
     });
 
     const arr = [''];
@@ -60,10 +67,25 @@ function handler(msg, [user = ''] = [], flags = {}) {
         fields.shift();
         if (page === 1) {
           rarities.forEach((rarity) => {
-            const entry = counts[rarity];
+            const entry = getCount(rarity);
             if (!entry.total) return;
             fields.push({
               name: `${translate(`rarity-${rarity.toLowerCase()}`)} (${entry.total})`,
+              value: `${entry}`,
+              inline: true,
+            });
+          });
+          if (fields.length) {
+            fields.push({
+              name: '----------',
+              value: 'Types:',
+            });
+          }
+          [...extensions.values()].forEach((extension) => {
+            const entry = getCount(extension);
+            if (!entry.total) return;
+            fields.push({
+              name: `${extension === 'BASE' ? 'UNDERTALE' : extension} (${entry.total})`,
               value: `${entry}`,
               inline: true,
             });
