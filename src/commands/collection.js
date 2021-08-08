@@ -8,7 +8,7 @@ const { CardEntry, get } = require('../collection');
 const { load, card: getCard } = require('../cache');
 const { generic: rarities, colors } = require('../util/rarities');
 
-function handler(msg, args = [], flags = {}) {
+function handler(msg, [user = ''] = [], flags = {}) {
   const collection = {};
   const counts = {};
   rarities.forEach((rarity) => {
@@ -16,7 +16,10 @@ function handler(msg, args = [], flags = {}) {
     counts[rarity] = new CardEntry();
   });
 
-  const chest = get(msg.author);
+  const searchUser = user.match(/<@\d+>/) ? user.substring(2, user.length - 1) : user;
+  const activeUser = (msg.channel.guild && msg.channel.guild.members.get(searchUser)) || msg._client.users.get(searchUser) || msg.author;
+  const chest = get(activeUser);
+  const otherUser = activeUser.id !== msg.author.id;
 
   return load().then(() => {
     Object.keys(chest).forEach((id) => {
@@ -47,7 +50,7 @@ function handler(msg, args = [], flags = {}) {
           inline: true,
         }];
         const embed = {
-          title: translate('decks-your-collection'),  
+          title: `${translate('decks-your-collection')}${otherUser ? ` - ${activeUser.nick || activeUser.username}` : ''}`,
           color: colors.BASE,
           fields,
         };
