@@ -16,8 +16,8 @@ function limiter(msg, ...rest) {
 
 // Basically a crippled version of draftbot
 function rates() {
-  const needle = random(10000);
-  if (needle < 3) {
+  const needle = random(40000);
+  if (needle < 1) {
     return 'determination';
   } else if (needle < 50) {
     return 'legendary';
