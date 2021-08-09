@@ -7,18 +7,11 @@ const random = require('../util/randomNumber');
 const { translate } = require('../lang');
 const { add: addCards } = require('../collection');
 const { super: legendary, final } = require('../util/rarities');
+const userQueue = require('../util/userQueue');
 
-
-const processing = {};
+const queue = userQueue(5);
 function limiter(msg, ...rest) {
-  const id = msg.author.id;
-  if (processing[id]) return undefined;
-  const ret = handler.call(this, msg, ...rest).then((ret) => {
-    delete processing[id];
-    return ret;
-  });
-  processing[id] = ret;
-  return ret;
+  return queue(msg.author, handler.bind(this, msg, ...rest));
 }
 
 // Basically a crippled version of draftbot
