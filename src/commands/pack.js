@@ -57,7 +57,7 @@ function build(msg, type = 'ut', size = 4) {
     default:
       collect = !shiny;
       for (let i = 0, l = size * 5; pack.length < size && i < l; i++) { // Run up to 5x the pack size to meet the pack size limit
-        const card = pick(rates(), type, shiny);
+        const card = pick(rates(), type, false);
         if (card) {
           card.shiny = shiny || random(100) < 5;
           pack.push(card);
