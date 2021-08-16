@@ -32,10 +32,12 @@ function handler(msg, [user = ''] = [], flags = {}) {
       const card = getCard(parseInt(id, 10));
       const entry = chest[id];
       if (!card) {
-        console.log('Missing card:', id)
-        return sum;
+        console.log('Missing card:', id);
+        return sum + entry.total;
       }
       const { rarity, extension } = card;
+      // Rarity changed
+      if (rarity === 'BASE') return sum + entry.total;
 
       collection[rarity].push({
         ...card,
