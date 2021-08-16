@@ -8,12 +8,19 @@ module.exports = new Command({
     alias: ['set', '+'],
   }, {
     alias: ['remove', '-', 'reset']
+  }, {
+    alias: ['note'],
+    converter: (data) => Array.isArray(data) ? data.join('\n') : data,
   }],
   handler(msg, args, flags) {
     const add = this.flag('+', flags);
     let ret;
     if (add) {
-      set(msg, add);
+      const mode = {
+        value: add,
+        note: this.flag('note', flags),
+      };
+      set(msg, mode);
       ret = `Mode set: ${add}`;
     } else if (this.flag('-', flags)) {
       set(msg, false);

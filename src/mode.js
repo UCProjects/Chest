@@ -1,17 +1,14 @@
-const Configstore = require('configstore');
+const Conf = require('conf');
 
-const config = new Configstore('robot-98');
+const config = new Conf();
 
-exports.get = (msg, flags = {}) => {
-  if (!flags.bypass) {
-    const mode = config.get(`discord.${msg.channel.id}.mode`);
-    if (mode) return mode;
-  }
-  return 'normal';
+exports.get = (msg) => {
+  const mode = config.get(`mode.${msg.channel.id}`);
+  return mode || 'normal';
 };
 
 exports.set = (msg, mode) => {
-  const key = `discord.${msg.channel.id}.mode`;
+  const key = `mode.${msg.channel.id}`;
   if (mode) {
     config.set(key, mode);
   } else {

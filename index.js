@@ -40,16 +40,20 @@ connection.on('messageCreate', (msg) => {
 
   msg.prefix = prefix;
   msg.command = command;
-  msg.reply = (content, file) => {
+  msg.reply = (content, file, mode = getMode(msg, flags)) => {
     if (content.file && !file) {
       file = content.file;
       delete content.file;
     }
-    const mode = getMode(msg, flags);
-    if (mode !== 'normal') {
-      return connection.getDMChannel(msg.author.id)
-        .then(chan => chan.createMessage(content, file));
-    } else {
+    if (file && !file.name) {
+      mode = file;
+      file = undefined;
+    }
+    const _mode = mode.value || mode;
+    if (_mode === 'normal' || flags.bypass && bypass(msg, {
+      flag: _mode !== 'mode',
+      permission: 'manageMessages',
+    })) {
       if (typeof content === 'string') {
         content = { content };
       }
@@ -59,6 +63,16 @@ connection.on('messageCreate', (msg) => {
         };
       }
       return connection.createMessage(msg.channel.id, content, file)
+    } else {
+      let warn = true;
+      if (_mode === 'warn' || mode.note) {
+        const message = mode.note || 'Redirecting to DM, please do not use commands here.';
+        msg.reply(message, 'normal');
+        warn = false;
+      }
+      return connection.getDMChannel(msg.author.id)
+        .then(chan => chan.createMessage(content, file))
+        .catch(() => warn && msg.reply('Unable to DM. Please allow direct messages from server members.', 'normal'));
     }
   };
   msg.connection = connection;
@@ -95,6 +109,10 @@ cache.load()
     process.exit(1);
   });
 
-function bypass(msg, { admin = false }) {
-  return admin && msg.channel.permissionsOf(msg.author.id).has('administrator');
+function bypass(msg, {
+  admin = false,
+  flag = false,
+  permission = 'administrator',
+}) {
+  return flag || admin && msg.channel.permissionsOf(msg.author.id).has(permission);
 }
