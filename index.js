@@ -50,8 +50,8 @@ connection.on('messageCreate', (msg) => {
       file = undefined;
     }
     const _mode = mode.value || mode;
-    if (_mode === 'normal' || flags.bypass && bypass(msg, {
-      flag: _mode !== 'mod',
+    if (_mode === 'normal' || (flags.bypass && _mode !== 'mod') || bypass(msg, {
+      check: true,
       permission: 'manageMessages',
     })) {
       if (typeof content === 'string') {
@@ -80,7 +80,7 @@ connection.on('messageCreate', (msg) => {
 
   Promise.resolve(flags.help ? commands.get('help') : commands.get(command.toLowerCase()))
     .then((command) => {
-      if (!command || !command.enabled(msg) && !bypass(msg, flags)) return undefined;
+      if (!command || !command.enabled(msg) && !bypass(msg, { check: flags.admin })) return undefined;
       if (flags.help) {
         if (msg.command) args.unshift(msg.command);
         msg.command = 'help';
@@ -110,9 +110,8 @@ cache.load()
   });
 
 function bypass(msg, {
-  admin = false,
-  flag = false,
+  check = false,
   permission = 'administrator',
 }) {
-  return flag || admin && msg.channel.permissionsOf(msg.author.id).has(permission);
+  return check && msg.channel.permissionsOf && msg.channel.permissionsOf(msg.author.id).has(permission);
 }
