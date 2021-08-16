@@ -51,7 +51,7 @@ connection.on('messageCreate', (msg) => {
     }
     const _mode = mode.value || mode;
     if (_mode === 'normal' || flags.bypass && bypass(msg, {
-      flag: _mode !== 'mode',
+      flag: _mode !== 'mod',
       permission: 'manageMessages',
     })) {
       if (typeof content === 'string') {
