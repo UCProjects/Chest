@@ -73,7 +73,7 @@ function handler(msg, args = [], flags = {}) {
           `* User \`${args.join(' ')}\` not found`;
       } else {
         const page = !flags.page || Number.isNaN(flags.page) ? 1 : flags.page;
-        return multiResult(leaderboard, undefined, msg, page);
+        return multiResult(arrayChunk(leaderboard), undefined, msg, page);
       }
     });
 }
@@ -91,7 +91,8 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
     .map(id => findUser(leaderboard, id))
     .filter(_ => _);
   if (users.length === 1) return singleResult(users[0]);
-  return multiResult(users, 'Registered users', msg);
+  users.sort((a, b) => a.rank - b.rank);
+  return multiResult([...arrayChunk(users), ...users], 'Registered users', msg);
 }
 
 function findUser(leaderboard = [userdata], needle) {
@@ -149,14 +150,19 @@ function singleResult(entry = userdata) {
     },
   };
 }
-function multiResult(entries = [userdata], title, msg, page = 1) {
-  return paginator(msg, arrayChunk(entries), {
+function multiResult(entries = [], title, msg, page = 1) {
+  return paginator(msg, entries, {
     renderer(data = [], page, total) {
-      return {
+      if (Array.isArray(data)) return {
         embed: {
           title: `${title || translate('leaderboard-title')} [${page}/${total}]`,
           description: data.map(entry => `${entry.rank + 1}. ${entry.username} #${entry.id}`).join('\n') || '* None',
         },
+      };
+      else {
+        const ret = singleResult(data);
+        ret.embed.author.name += ` [${page}/${total}]`;
+        return ret;
       }
     },
     page,
