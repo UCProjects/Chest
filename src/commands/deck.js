@@ -34,6 +34,7 @@ function handler(msg, args = [], flags = {}) {
         },
         cards: generateDeck(soul, {
           ranked: flags.ranked,
+          blacklist: array(this.flag('blacklist', flags)),
           include: array(getMultiFlags.call(this, msg, 'include')),
           singleton: this.flag('lib', flags),
         }),
@@ -77,11 +78,11 @@ module.exports = new Command({
     alias: ['ranked'],
     usage: '',
     description: 'Allows up to 1 DT card',
-  },/*{
+  }, {
     alias: ['blacklist', 'bl'],
     usage: '',
     description: 'Blacklist a rarity from the deck',
-  },*/ {
+  }, {
     alias: ['include', 'i', '+'],
     usage: '<card>',
     description: 'Include a card in the deck\n||Mystery bugged me so much for include, go bug him for me||',
@@ -137,7 +138,8 @@ function generateDeck(soul, {
   singleton = false,
 }) {
   const cards = allCards()
-    .filter(card => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul)); // Not token, no soul requirement, or matches soul
+    .filter((card, _, array) => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul) && // Not token, no soul requirement, or matches soul
+      (!blacklist.length || !blacklist.some(n => n.toUpperCase() === card.rarity)));
 
   const counts = new Map();
   let dtFlag = false;
