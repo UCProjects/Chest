@@ -167,10 +167,12 @@ function generateDeck(soul, {
     return deck.length === limit;
   });
 
-  while (deck.length < limit) {
+  for (let i = 0; deck.length < limit && i < 500; i++) {
     const card = random(cards);
-    addCard(card);
+    if (card) addCard(card);
   }
+
+  if (deck.length !== limit) throw 'Failed to fill deck';
 
   // Translate names
   deck.forEach(card => card.name = translate(`card-name-${card.id}`, 1));
