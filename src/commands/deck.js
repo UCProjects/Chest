@@ -36,6 +36,7 @@ function handler(msg, args = [], flags = {}) {
           ranked: flags.ranked,
           blacklist: array(this.flag('blacklist', flags)),
           include: array(getMultiFlags.call(this, msg, 'include')),
+          exclude: array(this.flag('exclude', flags)).map(n => getSync(n)),
           singleton: this.flag('lib', flags),
         }),
         artifacts: getArtifacts(array(this.flag('artifact', flags))),
@@ -132,14 +133,15 @@ function getArtifact(from = [], needles = []) {
 
 function generateDeck(soul, {
   ranked = false,
-  blacklist = [],
-  include = [],
-  exclude = [],
+  blacklist = [''],
+  include = [''],
+  exclude = [''],
   singleton = false,
 }) {
   const cards = allCards()
     .filter((card, _, array) => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul) && // Not token, no soul requirement, or matches soul
-      (!blacklist.length || !blacklist.some(n => n.toUpperCase() === card.rarity)));
+      (!blacklist.length || !blacklist.some(n => n.toUpperCase() === card.rarity)) &&
+      (!exclude.length || !exclude.includes(card)));
 
   const counts = new Map();
   let dtFlag = false;
