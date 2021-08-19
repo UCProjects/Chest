@@ -33,8 +33,9 @@ function handler(msg, args = [], flags = {}) {
           name: translate(`soul-${soul.toLowerCase()}`),
         },
         cards: generateDeck(soul, {
-          ...flags,
+          ranked: flags.ranked,
           include: array(getMultiFlags.call(this, msg, 'include')),
+          singleton: this.flag('lib', flags),
         }),
         artifacts: getArtifacts(array(this.flag('artifact', flags))),
       };
@@ -90,6 +91,9 @@ module.exports = new Command({
   }, */, {
     alias: ['artifact', 'art', 'a'],
     description: 'Include an artifact in the deck',
+  }, {
+    alias: ['lib', '1', 'single', 'limit'],
+    description: 'Only allow one of any card',
   }],
   disabled,
   handler,
@@ -129,6 +133,8 @@ function generateDeck(soul, {
   ranked = false,
   blacklist = [],
   include = [],
+  exclude = [],
+  singleton = false,
 }) {
   const cards = allCards()
     .filter(card => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul)); // Not token, no soul requirement, or matches soul
@@ -142,6 +148,7 @@ function generateDeck(soul, {
   function addCard(card) {
     const amt = counts.get(card.id) || 0;
     if (amt === limits[card.rarity]) return;
+    if (amt && singleton) return;
     if (ranked && card.rarity === 'DETERMINATION') {
       if (dtFlag) return;
       dtFlag = true;
