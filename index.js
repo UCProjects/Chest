@@ -72,7 +72,10 @@ connection.on('messageCreate', (msg) => {
       }
       return connection.getDMChannel(msg.author.id)
         .then(chan => chan.createMessage(content, file))
-        .catch(() => warn && msg.reply('Unable to DM. Please allow direct messages from server members.', 'normal'));
+        .catch((e) => {
+          if (warn) return msg.reply('Unable to DM. Please allow direct messages from server members.', 'normal');
+          throw e;
+        });
     }
   };
   msg.connection = connection;
@@ -92,10 +95,11 @@ connection.on('messageCreate', (msg) => {
       return msg.reply(response);
     })
     .catch((e) => {
+      if (typeof e === 'string') return msg.reply(e);
       console.error(e);
-      return msg.reply('Error processing command')
-        .catch(console.error); // Oh the irony
-    });
+      return msg.reply(`Error processing command: ${e.message || e.toString()}`);
+    })
+    .catch(console.error); // Oh the irony
 }).on('error', (e) => {
   console.error(e);
   process.exit();
