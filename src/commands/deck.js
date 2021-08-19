@@ -36,7 +36,7 @@ function handler(msg, args = [], flags = {}) {
           ...flags,
           include: array(getMultiFlags.call(this, msg, 'include')),
         }),
-        artifacts: getArtifacts(),
+        artifacts: getArtifacts(array(this.flag('artifact', flags))),
       };
 
       return {
@@ -87,7 +87,10 @@ module.exports = new Command({
   }, /* {
     alias: ['exclude', 'e', '!', '-'],
     description: 'Exclude a card in the deck',
-  }, */],
+  }, */, {
+    alias: ['artifact', 'art', 'a'],
+    description: 'Include an artifact in the deck',
+  }],
   disabled,
   handler,
 });
@@ -97,17 +100,29 @@ function getSoul(input) {
   return findSoul(input);
 }
 
-function getArtifacts() {
+function getArtifacts(prefer = []) {
   const ret = [];
   const arts = [...artifacts.values()].filter(a => !a.unavailable);
-  ret.push(random(arts));
+  // Translate name
+  arts.forEach(a => a.name = translate(`artifact-name-${a.id}`));
+  let art = getArtifact(arts, prefer) || random(arts);
+  ret.push(art);
   if (!ret[0].legendary) {
     const commons = arts.filter(a => !a.legendary && a !== ret[0]);
-    ret.push(random(commons));
+    art = getArtifact(commons, prefer) || random(commons);
+    ret.push(art);
   }
-  // Translate name
-  ret.forEach(art => art.name = translate(`artifact-name-${art.id}`));
   return ret;
+}
+
+function getArtifact(from = [], needles = []) {
+  for (let needle of needles) {
+    needle = needle.toLowerCase();
+    for (let art of from) {
+      if (needle === art.name.toLowerCase()) return art;
+    }
+  }
+  return undefined;
 }
 
 function generateDeck(soul, {
