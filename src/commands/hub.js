@@ -10,6 +10,7 @@ const disabled = require('../disabled');
 const random = require('../util/random');
 const paginator = require('../util/pagination');
 const arrayChunk = require('../util/arrayChunk');
+const validate = require('../util/validate');
 
 function handler(msg, args = [], flags = {}) {
   return Promise.all([loadArtifacts(), loadHub()])
@@ -45,15 +46,6 @@ function handler(msg, args = [], flags = {}) {
       if (!deck) return '* No deck found';
       return response(msg, deck);
     });
-}
-
-function validate(haystack, needle, strict = true) {
-  if (typeof needle === 'string') {
-    needle = needle.toLowerCase();
-    if (Array.isArray(haystack)) return haystack.some(key => strict ? key.toLowerCase() === needle : key.toLowerCase().includes(needle))
-    else if (typeof haystack === 'string') return strict ? haystack.toLowerCase() === needle : haystack.toLowerCase().includes(needle);
-  }
-  return true;
 }
 
 async function response(msg, deck) {
