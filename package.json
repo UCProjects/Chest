@@ -21,6 +21,7 @@
     "eris": "^0.14.0",
     "node-html-parser": "^4.1.1",
     "node-html-to-image": "^3.1.0",
+    "pm2": "^5.1.0",
     "queue": "^6.0.2"
   },
   "devDependencies": {
