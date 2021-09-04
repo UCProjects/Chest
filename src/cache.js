@@ -38,9 +38,13 @@ function getClosest(needle = '', directory = []) {
   directory.forEach(card => card.name = translate(`card-name-${card.id}`, 1));
   directory.sort((a, b) => a.name.length - b.name.length || a.name.localeCompare(b.name));
   // TODO: allow *actual* fuzzy match
-  const card = directory.find(card => card.name.toLowerCase() === needle.toLowerCase()) ||
-    directory.find(card => card.name.toLowerCase().startsWith(needle.toLowerCase())) || 
-    directory.find(card => card.name.toLowerCase().includes(needle.toLowerCase()));
+  needle = needle.toLowerCase();
+  const card = directory.find(card => {
+    const name = card.name.toLowerCase();
+    return name === needle ||
+      name.startsWith(needle) ||
+      name.includes(needle);
+  });
   if (card) { // Return a clone and translate some things
     normalMode();
     return {
