@@ -3,9 +3,14 @@ class Count {
     this.value = value;
     this.total = total;
   }
-  increment() {
-    this.value += 1;
-    this.total += 1;
+  increment(amt = 1) {
+    this.value += amt;
+    this.total += amt;
+  }
+  decrement(amt = 1) {
+    if (this.value < amt) return false;
+    this.value -= amt;
+    return true;
   }
   merge(other = new Count()) {
     this.value += other.value;
