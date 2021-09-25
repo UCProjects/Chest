@@ -27,6 +27,7 @@ function handler(msg, args = [], flags = {}) {
     const types = this.flag('types', flags);
     const souls = this.flag('soul', flags);
     const tribes = this.flag('tribe', flags);
+    const cardTypes = getTypes(flags);
 
     const results = cards.filter(card => validate(`${card.id}`, ids) &&
       validate(card.name, names, false) &&
@@ -37,7 +38,8 @@ function handler(msg, args = [], flags = {}) {
       validate(card.rarity, rarities) &&
       validate(card.extension, types) &&
       validate(card.soul && card.soul.name, souls) &&
-      validate(card.tribes, tribes));
+      validate(card.tribes, tribes) &&
+      validate(card.typeCard, cardTypes));
 
     return paginator(msg, arrayChunk(results), {
       renderer(data = [], current) {
@@ -51,6 +53,13 @@ function handler(msg, args = [], flags = {}) {
       },
     });
   });
+}
+
+function getTypes(flags) {
+  const cardTypes = [];
+  if (flags.monster) cardTypes.push(0);
+  if (flags.spell) cardTypes.push(1);
+  return cardTypes;
 }
 
 function converter(data) {
@@ -103,6 +112,14 @@ module.exports = new Command({
   }, {
     alias: ['tribe'],
     description: 'Search card tribe',
+    converter,
+  }, {
+    alias: ['monster'],
+    description: 'Search monster cards',
+    converter,
+  }, {
+    alias: ['spell'],
+    description: 'Search spell cards',
     converter,
   }],
   disabled,
