@@ -24,7 +24,7 @@ function handler(msg, args = [], flags = {}) {
     const atks = this.flag('attack', flags);
     const hps = this.flag('health', flags);
     const rarities = this.flag('rarity', flags);
-    const types = this.flag('types', flags);
+    const types = this.flag('type', flags);
     const souls = this.flag('soul', flags);
     const tribes = this.flag('tribe', flags);
     const cardTypes = getTypes(flags);
