@@ -8,7 +8,7 @@ fs.readdir(__dirname)
   .then(files => {
     const array = [];
     files.forEach((file) => {
-      if (file.startsWith('.') || file.match(/index\.js$/)) return;
+      if (file.startsWith('.') || file.match(/index\.js$/) || !file.endsWith('.js')) return;
 
       const command = require(`./${file}`);
       if (!(command instanceof Command)) return console.debug('Bad file:', file);
