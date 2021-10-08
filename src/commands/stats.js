@@ -1,3 +1,4 @@
+const bytes = require('bytes');
 const Command = require('chat-commands/src/command');
 const pm2 = require('pm2');
 const disabled = require('../disabled');
@@ -34,7 +35,7 @@ function handler(msg) {
         inline: true,
       }, {
         name: 'RAM Usage',
-        value: `${memory}b`,
+        value: bytes(memory, { thousandsSeparator: ',' }),
         inline: true,
       });
     }
