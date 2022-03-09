@@ -57,7 +57,7 @@ function handler(msg, args = [], flags = {}) {
 
 module.exports = new Command({
   title: '',
-  alias: ['artifact', 'art'],
+  alias: ['artifact', 'art', 'a'],
   examples: [],
   usage: '',
   description: 'Look up artifact data',
