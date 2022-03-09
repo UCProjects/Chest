@@ -11,6 +11,7 @@ module.exports = function buildStatus(card) {
   if (card.cost < card.originalCost) stats.push('bonusCost');
   else if (card.cost > card.originalCost) stats.push('malusCost');
   if (card.rarity === 'DETERMINATION') stats.push('determination');
+  if (card.loop) stats.push(text('loop', card.loop));
   if (card.taunt) stats.push('taunt');
   if (card.charge) stats.push('charge');
   if (card.haste) stats.push('haste');
@@ -30,10 +31,11 @@ module.exports = function buildStatus(card) {
   if (card.invulnerable) stats.push('invulnerable');
   if (card.transparency) stats.push('transparency');
   if (card.silence) stats.push('silenced');
-  // Legacy
-  if (card.ranged) stats.push('ranged');
-  if (card.thorns) stats.push(text('thorns', card.thorns));
+  if (card.ranged) stats.push('ranged'); // Legacy
+  if (card.thorns) stats.push(text('thorns', card.thorns)); // Legacy
   if (card.catchedMonster) stats.push('box');
+  if (card.shockEnabled) stats.push('shock');
+  if (card.supportEnabled) stats.push('support');
   if (card.creatorFixedId) stats.push('created');
   card.status = stats.map((stat = '') => stat.startsWith('<') ? stat : image(stat));
 }
