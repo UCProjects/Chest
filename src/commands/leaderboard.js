@@ -88,7 +88,7 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
         embed: {
           description: [
             `* ${entries.main ? 'Main not found' : 'No main registered'}`,
-            `Use \`${${prefix}}!${msg.command} Username --register --main\` to register`,
+            `Use \`${prefix}!${msg.command} Username --register --main\` to register`,
           ].join('\n'),
         }
       };
