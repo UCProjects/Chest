@@ -82,9 +82,16 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
   main = false,
   msg,
 } = {}) {
+  const prefix = msg.prefix === msg.mention ? '@me ' : msg.prefix;
   if (main) {
-    return singleResult(findUser(leaderboard, entries.main)) ||
-        `* ${entries.main ? 'Main not found' : 'No main registered'}`;
+    return singleResult(findUser(leaderboard, entries.main)) || {
+        embed: {
+          description: [
+            `* ${entries.main ? 'Main not found' : 'No main registered'}`,
+            `Use \`${${prefix}}!${msg.command} Username --register --main\` to register`,
+          ].join('\n'),
+        }
+      };
   }
   const users = Object.keys(entries)
     .filter(_ => _ !== 'main')
@@ -92,7 +99,10 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
     .filter(_ => _);
   if (users.length === 1) return singleResult(users[0]);
   users.sort((a, b) => a.rank - b.rank);
-  return multiResult([...arrayChunk(users), ...users], 'Registered users', msg);
+  return multiResult([...arrayChunk(users), ...users], 'Registered users', msg, 1, [
+    '* None',
+    `Use \`${prefix}!${msg.command} Username --register\` to register`,
+  ].join('\n'));
 }
 
 function findUser(leaderboard = [userdata], needle) {
@@ -150,13 +160,13 @@ function singleResult(entry = userdata) {
     },
   };
 }
-function multiResult(entries = [], title, msg, page = 1) {
+function multiResult(entries = [], title, msg, page = 1, emptyMessage = '* None') {
   return paginator(msg, entries, {
     renderer(data = [], page, total) {
       if (Array.isArray(data)) return {
         embed: {
           title: `${title || translate('leaderboard-title')} [${page}/${total}]`,
-          description: data.map(entry => `${entry.rank + 1}. ${entry.username} #${entry.id}`).join('\n') || '* None',
+          description: data.map(entry => `${entry.rank + 1}. ${entry.username} #${entry.id}`).join('\n') || emptyMessage,
         },
       };
       else {
@@ -172,7 +182,9 @@ function multiResult(entries = [], title, msg, page = 1) {
 module.exports = new Command({
   title: '',
   alias: ['leaderboard', 'lb', 'rank'],
-  examples: [],
+  examples: [
+    '`<command> MyUser --register` - registers "MyUser" to your discord',
+  ],
   usage: '[<me|main>|username]',
   description: 'Lookup current leaderboard',
   flags: [{
