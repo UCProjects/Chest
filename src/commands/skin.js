@@ -70,6 +70,7 @@ function handler(msg, args = [], flags = {}) {
     return get(needle).then((card) => {
       if (!card) return `* Skin \`${args.join(' ')}\` not found`;
       const works = [...skins.values()].filter(skin => skin.cardId === card.id);
+      if (!works.length) return `* ${card.name} has no skins`;
       return paginator(msg, works, {
         renderer(skin, page, total) {
           return {
