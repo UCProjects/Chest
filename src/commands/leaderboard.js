@@ -88,7 +88,7 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
         embed: {
           description: [
             `* ${entries.main ? 'Main not found' : 'No main registered'}`,
-            `Use \`${prefix}!${msg.command} Username --register --main\` to register`,
+            `Use \`${prefix}${msg.command} Username --register --main\` to register`,
           ].join('\n'),
         }
       };
@@ -101,7 +101,7 @@ function getRegistered(leaderboard = [userdata], entries = {}, {
   users.sort((a, b) => a.rank - b.rank);
   return multiResult([...arrayChunk(users), ...users], 'Registered users', msg, 1, [
     '* None',
-    `Use \`${prefix}!${msg.command} Username --register\` to register`,
+    `Use \`${prefix}${msg.command} Username --register\` to register`,
   ].join('\n'));
 }
 
