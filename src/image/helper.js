@@ -33,9 +33,11 @@ module.exports = function buildStatus(card) {
   if (card.silence) stats.push('silenced');
   if (card.ranged) stats.push('ranged'); // Legacy
   if (card.thorns) stats.push(text('thorns', card.thorns)); // Legacy
-  if (card.catchedMonster) stats.push('box');
+  if (card.caughtMonster ||card.catchedMonster) stats.push('box');
   if (card.shockEnabled) stats.push('shock');
   if (card.supportEnabled) stats.push('support');
-  if (card.creatorFixedId) stats.push('created');
+  if (data.creatorInfo || card.creatorFixedId) stats.push('created');
+
+  stats.reverse(); // Order them "properly"
   card.status = stats.map((stat = '') => stat.startsWith('<') ? stat : image(stat));
 }
