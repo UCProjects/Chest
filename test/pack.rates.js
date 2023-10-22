@@ -1,6 +1,7 @@
 const Entry = require('../src/util/cardEntry');
 const random = require('../src/util/randomNumber');
 const { generic: rarities } = require('../src/util/rarities');
+const { expect } = require('chai');
 
 class Results {
   constructor() {
@@ -33,7 +34,7 @@ function rates({
 }
 
 const tests = [{
-  name: 'Previous', // Averages about 0.15%
+  name: 'Previous - 10k', // Averages about 0.15%
   DETERMINATION: 3,
   LEGENDARY: 50,
   EPIC: 200,
@@ -41,22 +42,20 @@ const tests = [{
   count: 10000,
   packs: 10000,
 }, {
-  name: 'New', // Averages about 0.01%
+  name: 'New - 10k', // Averages about 0.01%
   DETERMINATION: 1,
   packs: 10000,
 }, {
   name: 'New - 100k',
   DETERMINATION: 1,
-  count: 40000,
   packs: 100000,
 }, {
   name: 'New - 1m',
   DETERMINATION: 1,
-  count: 40000,
   packs: 1000000,
 }];
 
-describe('rates.js', () => {
+describe('Pack Rates', () => {
   tests.forEach((test) => {
     describe(test.name, () => {
       const results = new Results();
@@ -64,10 +63,12 @@ describe('rates.js', () => {
       for(let i = 0; i < trials; i++) {
         results[rates(test)].regular.increment();
       }
-      console.log(test.name);
       rarities.forEach((rarity) => {
         const total = results[rarity].total;
-        console.log(rarity, total, 100 * total / test.packs);
+        const percent =  100 * total / test.packs;
+        it(`${rarity}: ${total} (${rarity === 'COMMON' ? percent % 100 : percent}%)`, () => {
+          expect(true).to.be.true;
+        });
       });
     })
   });
