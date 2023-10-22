@@ -36,7 +36,7 @@ module.exports = function buildStatus(card) {
   if (card.caughtMonster ||card.catchedMonster) stats.push('box');
   if (card.shockEnabled) stats.push('shock');
   if (card.supportEnabled) stats.push('support');
-  if (data.creatorInfo || card.creatorFixedId) stats.push('created');
+  if (card.creatorInfo || card.creatorFixedId) stats.push('created');
 
   stats.reverse(); // Order them "properly"
   card.status = stats.map((stat = '') => stat.startsWith('<') ? stat : image(stat));
