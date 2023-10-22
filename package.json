@@ -19,7 +19,7 @@
     "conf": "^10.0.3",
     "configstore": "^5.0.1",
     "dotenv": "^8.6.0",
-    "eris": "^0.14.1",
+    "eris": "^0.17.1",
     "node-html-parser": "^4.1.5",
     "node-html-to-image": "^3.2.0",
     "pm2": "^5.1.2",
