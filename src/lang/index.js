@@ -26,6 +26,10 @@ exports.load = () => {
   return undercards.get('/translation/en.json')
     .then(({data}) => {
       next = Date.now() + hour;
+      Object.entries(data).forEach(([key, value]) => {
+        if (!value.includes('<')) return;
+        data[key] = value.replace(/\</g, '&lt;');
+      });
       setTimeout(() => events.emit('load', { ...data }));
       return data;
     }).then((data) => banana.load(data))
