@@ -36,7 +36,7 @@ function handler(msg, args = [], flags = {}) {
             },
           };
         },
-        page: randomNumber(skins.values()) + 1,
+        page: randomNumber(skins.length) + 1,
         navButtons: false,
         randomButton: true,
       });
