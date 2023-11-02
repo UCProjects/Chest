@@ -12,6 +12,16 @@ function handler(msg, args = [], flags = {}) {
     return '* Error retrieving skins';
   }).then((error) => {
     if (error) return error;
+
+    const filter = (skin) => {
+      if (this.flag('available', flags)) {
+        return !skin.unavailable;
+      } else if (this.flag('unavailable', flags)) {
+        return skin.unavailable;
+      }
+      return true;
+    };
+
     const needle = args.join(' ').toLowerCase();
     if (!needle) {
       if (msg.command.toLowerCase().startsWith('artist')) {
@@ -26,7 +36,8 @@ function handler(msg, args = [], flags = {}) {
           },
         });
       }
-      return paginator(msg, [...skins.values()], {
+      const filteredSkins = [...skins.values()].filter(filter);
+      return paginator(msg, filteredSkins, {
         renderer(skin, page, total) {
           return {
             embed: {
@@ -36,15 +47,15 @@ function handler(msg, args = [], flags = {}) {
             },
           };
         },
-        page: randomNumber(skins.length) + 1,
+        page: randomNumber(filteredSkins.length) + 1,
         navButtons: false,
         randomButton: true,
       });
     }
     const artist = [...artists.keys()].find(name => name.toLowerCase() === needle || name.toLowerCase().startsWith(needle));
     if (artist) {
-      const works = artists.get(artist);
-      return paginator(msg, [...works], {
+      const works = artists.get(artist).filter(filter);
+      return paginator(msg, works, {
         renderer(skin, page, total) {
           return {
             embed: {
@@ -69,7 +80,7 @@ function handler(msg, args = [], flags = {}) {
     }
     return get(needle).then((card) => {
       if (!card) return `* Skin \`${args.join(' ')}\` not found`;
-      const works = [...skins.values()].filter(skin => skin.cardId === card.id);
+      const works = [...skins.values()].filter(skin => skin.cardId === card.id && filter(skin));
       if (!works.length) return `* ${card.name} has no skins`;
       return paginator(msg, works, {
         renderer(skin, page, total) {
@@ -113,7 +124,11 @@ module.exports = new Command({
   examples: [],
   usage: '[skin|artist|card]',
   description: 'Look up skins for a card or artist',
-  flags: [],
+  flags: [{
+    alias: ['available'],
+  }, {
+    alias: ['unavailable', 'na'],
+  }],
   disabled: (msg) => !process.env.UC_LOGIN || disabled(msg),
   handler,
 });
