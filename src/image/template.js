@@ -30,6 +30,7 @@ module.exports = `<html>
     .attack { width: 40px; border-right: 2px solid var(--border); color: rgb(255, 0, 0); font-size: 20px; }
     .rarity { flex-grow: 2; padding: 5px 0; }
     .health { width: 40px; border-left: 2px solid var(--border); color: rgb(107, 204, 0); font-size: 20px; }
+    .invisible { display: none; }
     .DETERMINATION { color: var(--dt); }
     .LEGENDARY { color: rgb(255, 215, 0); }
     .EPIC { color: var(--pers); }
@@ -48,6 +49,8 @@ module.exports = `<html>
     .PERSEVERANCE { color: var(--pers); }
     .KINDNESS { color: var(--kindness); }
     .JUSTICE { color: var(--justice); }
+    .switch_left { padding: 0px 0.2em; border-radius: 0.3em; background-color: rgba(0, 255, 255, 0.4); -webkit-box-decoration-break: clone; -o-box-decoration-break: clone; box-decoration-break: clone; }
+    .switch_right { padding: 0px 0.2em; border-radius: 0.3em; background-color: rgba(255, 0, 0, 0.4); -webkit-box-decoration-break: clone; -o-box-decoration-break: clone; box-decoration-break: clone; }
   </style>
 </head>
 <body>

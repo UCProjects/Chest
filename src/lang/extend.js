@@ -106,6 +106,12 @@ module.exports = (banana, translate) => {
     if (empty || !name) return '';
     return `${translate(getKey('reward', cosmetic))} - ${name}`;
   };
+  obj.style = (nodes) => {
+    const {args: [clazz, text]} = parse(nodes);
+    return getText(text, clazz);
+  };
+  obj.switch_left = (nodes) => switchHandler(nodes, 'left');
+  obj.switch_right = (nodes) => switchHandler(nodes, 'right');
   
   const { emitter } = banana.parser;
   Object.keys(obj).forEach(key => {
@@ -114,6 +120,16 @@ module.exports = (banana, translate) => {
     emitter[key] = val;
   });
 };
+
+function switchHandler(nodes, direction) {
+  const {args: [temp, text = temp]} = parse(nodes);
+  const opacity = isNaN(Number(temp)) ? 1 : Number(temp);
+  const classes = [`switch_${direction}`];
+  if (opacity <= 0) {
+    classes.push('invisible');
+  }
+  return getText(text, classes.join(' '));
+}
 
 module.exports.simpleMode = () => simple = true;
 
