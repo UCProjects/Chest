@@ -26,7 +26,8 @@ module.exports = new Command({
       set(msg, false);
       ret =  'Mode reset';
     } else {
-      ret = `Mode: ${get(msg, flags).value}`;
+      const mode = get(msg, flags);
+      ret = `Mode: ${mode.value || mode}`;
     }
     // Force it to reply in the current channel
     return msg.channel.createMessage(ret);
