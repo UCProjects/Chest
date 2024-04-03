@@ -1,0 +1,70 @@
+@font-face { font-family: 'DTM-Mono'; src: url('https://firebasestorage.googleapis.com/v0/b/replay.uc.feildmaster.com/o/DTM-Mono.otf?alt=media&token=424020c7-7b2b-4217-971b-333fe1704da4') format('truetype'); }
+body {
+  font-family: 'DTM-Mono';
+  --bg: rgb(0, 0, 0);
+  --dt: rgb(255, 0, 0);
+  --patience: rgb(65, 252, 255);
+  --bravery: rgb(252, 165, 0);
+  --integ: rgb(0, 100, 255);
+  --epic: rgb(213, 53, 217);
+  --kindness: rgb(0, 192, 0);
+  --justice: rgb(255, 255, 0);
+  --font: rgb(255, 255, 255);
+  --border: rgb(255, 255, 255);
+  --cost: rgb(52, 185, 254);
+  --attack: rgb(255, 0, 0);
+  --health: rgb(107, 204, 0);
+  --legendary: rgb(255, 215, 0);
+  --rare: rgb(0, 184, 255);
+  background-color: var(--bg);
+  width: 162px;
+}
+[data-overlay]::before { content: attr(data-overlay); position: absolute; font-family: segoe ui, monospace; bottom: 0; left: 0; font-size: 11px; color: var(--font); }
+.outlined { text-shadow: -1px -1px 0 var(--bg), 1px 1px 0 var(--bg), -1px 1px 0 var(--bg), 1px -1px 0 var(--bg); }
+.row { display: flex; flex-direction: row; justify-content: space-between; }
+.black-bg { background-color: var(--bg); background-clip: padding-box; }
+.center-v { display: flex; align-items: center; }
+.center-h { display: flex; justify-content: center; }
+.card { border: 2px solid var(--border); color: var(--font); width: 162px; overflow: hidden; box-sizing: border-box; user-select: none; -moz-user-select: none; -webkit-user-select: none; }
+.card * { margin: 0; box-sizing: border-box; padding: 0; }
+.top, .bottom { height: 30px; }
+.top > * { border-bottom: 2px solid var(--border); }
+.name { flex-grow: 2; padding-left: 3px; white-space: nowrap; overflow: hidden; }
+div.cost { width: 40px; border-left: 2px solid var(--border); font-size: 1.2rem; margin-top: -4px; color: var(--cost); }
+div.image { position: relative; height: 88px; }
+img.avatar { width: 100%; height: 100%; background-color: var(--bg); }
+.status, .tribes { position: absolute; right: 2px; display: flex; }
+.status { top: 4px; }
+.tribes { bottom: 0px; }
+.status > img, .tribes > img, .status > span { margin-right: 2px; }
+.status > span { position: relative; }
+.status img, .tribes img { width: 16px; }
+div.description { border-top: 2px solid var(--border); text-align: center; font-size: 0.8rem; padding: 2px 1px; min-height: 80px; }
+.bottom > * { border-top: 2px solid var(--border); }
+div.attack { width: 40px; border-right: 2px solid var(--border); color: var(--attack); font-size: 20px; }
+div.rarity { flex-grow: 2; padding: 5px 0; }
+div.health { width: 40px; border-left: 2px solid var(--border); color: var(--health); font-size: 20px; }
+.invisible { display: none; }
+.DETERMINATION { color: var(--dt); }
+.LEGENDARY { color: var(--legendary); }
+.EPIC { color: var(--epic); }
+.RARE { color: var(--rare); }
+.COMMON { color: var(--font); }
+.BASE { color: rgb(128, 128, 128); }
+.GENERATED, .TOKEN { color: rgb(0, 200, 0); }
+.underlined { text-decoration: underline; }
+.green { color: rgb(102, 204, 0); }
+.red { color: var(--attack); }
+.yellow { color: var(--legendary); }
+.blue { color: var(--rare); }
+.PATIENCE { color: var(--patience); }
+.BRAVERY { color: var(--bravery); }
+.INTEGRITY { color: var(--integ); }
+.PERSEVERANCE { color: var(--epic); }
+.KINDNESS { color: var(--kindness); }
+.JUSTICE { color: var(--justice); }
+.switch_left { padding: 0px 0.2em; border-radius: 0.3em; background-color: rgba(0, 255, 255, 0.4); -webkit-box-decoration-break: clone; -o-box-decoration-break: clone; box-decoration-break: clone; }
+.switch_right { padding: 0px 0.2em; border-radius: 0.3em; background-color: rgba(255, 0, 0, 0.4); -webkit-box-decoration-break: clone; -o-box-decoration-break: clone; box-decoration-break: clone; }
+span.cost { color: var(--cost); }
+span.attack { color: var(--attack); }
+span.health { color: var(--health); }
