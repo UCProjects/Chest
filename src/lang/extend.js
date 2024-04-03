@@ -4,6 +4,9 @@ function parse(nodes) {
   const found = nodes.findIndex((node) => node.startsWith('override='));
   const override = !!~found && nodes.splice(found, 1)[0];
   return {
+    /**
+     * @type {String[]}
+     */
     args: nodes,
     override: override && override.substring(override.indexOf('=') + 1),
     empty: !nodes.length && !override,
@@ -112,6 +115,14 @@ module.exports = (banana, translate) => {
   };
   obj.switch_left = (nodes) => switchHandler(nodes, 'left');
   obj.switch_right = (nodes) => switchHandler(nodes, 'right');
+  obj.stats = (nodes) => {
+    const { args } = parse(nodes);
+    if (simple) return args.join('/');
+    return ['cost', 'attack', 'health']
+      .splice(3 - args.length)
+      .map((clazz, i) => args[i].replace(/\d+/, `<span class="${clazz}">$&</span>`))
+      .join('/');
+  };
   
   const { emitter } = banana.parser;
   Object.keys(obj).forEach(key => {
