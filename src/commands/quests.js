@@ -33,6 +33,7 @@ function handler(msg, [pass] = [], flags = {}) {
           ret.fields.push({
             name: `○ ${translate(`event-season-${key}`)}`,
             value: l.join('\n'),
+            inline: true,
           })
         });
       }
