@@ -37,7 +37,7 @@ function handler(msg, args = [], flags = {}) {
       validate(`${card.hp}`, hps) &&
       validate(card.rarity, rarities) &&
       validate(card.extension, types) &&
-      validate(card.soul && card.soul.name, souls) &&
+      validate(card.soul?.name ?? '', souls) &&
       validate(card.tribes, tribes) &&
       validate(card.typeCard, cardTypes));
 
@@ -63,7 +63,7 @@ function getTypes(flags) {
 }
 
 function converter(data) {
-  if (data === true || data === undefined) return [];
+  if (data === true || data === undefined || data === '') return [];
   return toArray(data);
 }
 
