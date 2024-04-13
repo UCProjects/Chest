@@ -4,7 +4,7 @@ function validate(haystack, needle, strict = true) {
     else if (typeof haystack === 'string') return check(haystack, needle, strict);
   } else if (Array.isArray(needle)) {
     return !needle.length || needle.some(value => validate(haystack, value, strict));
-  } else if (!strict && needle !== undefined) {
+  } else if (!strict && needle && haystack) {
     return haystack == needle;
   } else if (typeof haystack === typeof needle) {
     return haystack === needle;

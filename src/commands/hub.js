@@ -22,10 +22,10 @@ function handler(msg, args = [], flags = {}) {
       const type = this.flag('archetype', flags);
       const unfiltered = flags.newest ? time() : rank();
       const decks = unfiltered.filter(deck => validate(deck.name, needle, false) &&
-        validate(difficulty, deck.difficulty) &&
-        validate(soul, deck.data.soul) &&
-        validate(type, deck.archetype) &&
-        validate(author, deck.owner.username));
+        validate(deck.difficulty, difficulty) &&
+        validate(deck.data.soul, soul) &&
+        validate(deck.archetype, type) &&
+        validate(deck.owner.username, author));
 
       if (flags.list || (decks.length > 1 && (needle || author && author !== true))) {
         return paginator(msg, arrayChunk(decks.map(deck => `${deck.name} - ${deck.owner.username}`)), {
@@ -109,21 +109,27 @@ module.exports = new Command({
   flags: [{
     alias: ['author', 'owner', 'user'],
     description: 'Limit results to provided author(s)',
+    default: false,
   }, {
     alias: ['soul', 'class'],
     description: 'Limit results to provided soul(s)',
+    default: false,
   }, {
     alias: ['difficulty'],
     description: 'Limit results to provided difficulty(s)',
+    default: false,
   }, {
     alias: ['archetype', 'type'],
     description: 'Limit results to provided type(s)',
+    default: false,
   }, {
     alias: ['newest'],
     description: 'Orders by date instead of rank',
+    default: false,
   }, {
     alias: ['list'],
     description: 'Forces a list to be shown',
+    default: false,
   }],
   disabled: (msg) => !process.env.UC_LOGIN || disabled(msg),
   handler,
