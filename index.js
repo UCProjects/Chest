@@ -13,10 +13,13 @@ if (!token) throw new Error('Missing token');
 
 const connection = new Discord.Client(token);
 
+const local = process.env.LOCAL;
+
 connection.on('messageCreate', (msg) => {
   const ignoreSelf = msg.author.id === connection.user.id;
   const ignoreBots = msg.author.bot;
-  if (ignoreSelf || ignoreBots) return;
+  const ignoreOthers = local && msg.author.id !== local;
+  if (ignoreSelf || ignoreBots || ignoreOthers) return;
 
   const filtered = msg.content.replace(/<@!/g, '<@');
   const from = prefixes.map((pref) => pref.replace('@mention', connection.user.mention)).filter(_ => _);
