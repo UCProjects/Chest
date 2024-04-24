@@ -1,5 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
 const Banana = require('banana-i18n');
+const config = require('../config');
 const undercards = require('../undercards');
 const extend = require('./extend');
 
@@ -8,6 +9,8 @@ const events = new EventEmitter();
 
 const hour = 60 * 1000;
 let next = Date.now();
+
+banana.load(config.get('lang', {}));
 
 exports.translate = (message, ...args) => {
   let text;
@@ -31,6 +34,7 @@ exports.load = () => {
         data[key] = value.replace(/\</g, '&lt;');
       });
       setTimeout(() => events.emit('load', { ...data }));
+      config.set('lang.en', data);
       return data;
     }).then((data) => banana.load(data))
     .catch(console.error);

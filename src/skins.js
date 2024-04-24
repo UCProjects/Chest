@@ -1,3 +1,4 @@
+const config = require('./config');
 const undercards = require('./undercards');
 const login = require('./util/login');
 
@@ -6,6 +7,17 @@ let next = Date.now();
 
 const skins = new Map();
 const artists = new Map([['', []]]);
+
+function set(skin) {
+  skins.set(skin.id, skin);
+    const artist = skin.authorName;
+    const works = artists.get(artist) || [];
+    // Doesn't exist? Add it
+    if (!works.length) artists.set(artist, works);
+    works.push(skin);
+}
+
+config.get('skins', []).forEach(set);
 
 function fetch() {
   const password = process.env.UC_LOGIN;
@@ -19,7 +31,8 @@ function fetch() {
       artists.clear();
       next = Date.now() + day;
 
-      JSON.parse(data.cardSkins).forEach((skin) => {
+      const skinData = JSON.parse(data.cardSkins);
+      skinData.forEach((skin) => {
         skins.set(skin.id, skin);
         const artist = skin.authorName;
         const works = artists.get(artist) || [];
@@ -27,6 +40,7 @@ function fetch() {
         if (!works.length) artists.set(artist, works);
         works.push(skin);
       });
+      config.set('skins', skinData);
     });
 }
 

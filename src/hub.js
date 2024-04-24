@@ -35,7 +35,7 @@ function fetch() {
   return login(password)
     .then(Cookie => undercards.get('/HubDecksConfig', { headers: { Cookie }, params: { action: 'shop' } }))
     .then(({ data }) => {
-      if (!data) throw new Error('Missing hub data');
+      if (!data?.hubDecks) throw new Error('Missing hub data');
       next = Date.now() + delay;
       decks.clear();
 

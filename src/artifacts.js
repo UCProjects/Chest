@@ -1,3 +1,4 @@
+const config = require('./config');
 const undercards = require('./undercards');
 const login = require('./util/login');
 
@@ -6,6 +7,12 @@ let next = Date.now();
 
 const artifacts = new Map([['', {}]]);
 
+function set(artifact) {
+  artifacts.set(artifact.id, artifact);
+}
+
+config.get('artifacts', []).forEach(set);
+
 function fetch() {
   const password = process.env.UC_LOGIN;
   if (!password) return Promise.reject('No login');
@@ -13,12 +20,13 @@ function fetch() {
   return login(password)
     .then(Cookie => undercards.get('/DecksConfig', { headers: { Cookie } }))
     .then(({ data }) => {
-      if (!data) throw new Error('Missing artifact data');
+      if (!data?.allArtifacts) throw new Error('Missing artifact data');
       artifacts.clear();
       next = Date.now() + day;
 
-      JSON.parse(data.allArtifacts)
-        .forEach(artifact => artifacts.set(artifact.id, artifact));
+      const artifactData = JSON.parse(data.allArtifacts);
+      artifactData.forEach(artifact => artifacts.set(artifact.id, artifact));
+      config.set('artifacts', artifactData);
     });
 }
 

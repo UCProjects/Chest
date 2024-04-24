@@ -1,4 +1,5 @@
 const { search } = require('fast-fuzzy');
+const config = require('./config');
 const undercards = require('./undercards');
 const { translate, load } = require('./lang');
 const { normalMode, simpleMode } = require('./lang/extend');
@@ -9,13 +10,21 @@ const cards = new Map();
 const day = 24 * 60 * 1000;
 let next = Date.now();
 
+function set(card) {
+  cards.set(card.id, card);
+}
+
+config.get('cards', []).forEach(set);
+
 exports.load = () => {
   if (Date.now() < next) return load();
   return Promise.all([undercards.get('/AllCards'), load()])
     .then(([{ data: { cards: newCards } }]) => {
       if (newCards) {
         cards.clear(); // Remove old cards
-        JSON.parse(newCards).forEach(card => cards.set(card.id, card));
+        const data = JSON.parse(newCards);
+        data.forEach(set);
+        config.set('cards', data);
       }
       next = Date.now() + day;
     }).catch(console.error);
@@ -29,6 +38,11 @@ exports.getSync = (name) => getClosest(name, [...cards.values()]);
 exports.card = (id) => cards.get(id);
   
 exports.all = () => [...cards.values()];
+
+exports.info = () => ({
+  size: cards.size,
+  time: next,
+});
 
 exports.pick = (rarity = 'any', type = 'mix', baseIsCommon = true) => {
   const subset = exports.all().filter((card) => validateRarity(card, rarity, baseIsCommon) && validateType(card, type));
