@@ -1,6 +1,7 @@
+const { search } = require('fast-fuzzy');
 const undercards = require('./undercards');
 const { translate, load } = require('./lang');
-const { normalMode } = require('./lang/extend');
+const { normalMode, simpleMode } = require('./lang/extend');
 const random = require('./util/random');
 
 const cards = new Map();
@@ -35,20 +36,16 @@ exports.pick = (rarity = 'any', type = 'mix', baseIsCommon = true) => {
 };
 
 function getClosest(needle = '', directory = []) {
-  directory.forEach(card => card.name = translate(`card-name-${card.id}`, 1));
-  directory.sort((a, b) => a.name.length - b.name.length || a.name.localeCompare(b.name));
-  // TODO: allow *actual* fuzzy match
-  needle = needle.toLowerCase();
-  const card = directory.find(card => {
-    const name = card.name.toLowerCase();
-    return name === needle ||
-      name.startsWith(needle) ||
-      name.includes(needle);
+  simpleMode();
+  const [card] = search(needle, directory, {
+    keySelector: ({ id }) => translate(`card-name-${id}`, 1),
+    threshold: 0.8,
   });
   if (card) { // Return a clone and translate some things
     normalMode();
     return {
       ...card,
+      name: translate(`card-name-${card.id}`, 1),
       description: translate(`card-${card.id}`),
     };
   }
