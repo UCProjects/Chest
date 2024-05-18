@@ -72,8 +72,9 @@ function build(msg, type = 'ut', size = 4) {
 
 function handler(msg, args = [], flags = {}) {
   return load().then(() => {
-    const pack = build(msg, flags.type || args[0]);
-    if (!pack.length) return `Invalid type: ${flags.type}`;
+    const type = flags.type || args[0];
+    const pack = build(msg, type);
+    if (!pack.length) return `Invalid type: ${type}`;
     normalMode();
     pack.forEach((card) => {
       card.name = translate(`card-name-${card.id}`, 1);
