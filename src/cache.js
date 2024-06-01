@@ -36,7 +36,7 @@ exports.get = (name) => exports.load()
 exports.getSync = (name) => getClosest(name, [...cards.values()]);
 
 exports.card = (id) => cards.get(id);
-  
+
 exports.all = () => [...cards.values()];
 
 exports.info = () => ({
@@ -89,6 +89,9 @@ function validateType({extension: cardType = ''}, type = '') {
     case 'base':
     case 'undertale':
     case 'ut': return cardType === 'BASE';
+    case 'undertaleyellow':
+    case 'yellow':
+    case 'uty': return cardType === 'UTY';
     case 'all':
     case 'any':
     case 'shiny':
