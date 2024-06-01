@@ -108,7 +108,7 @@ module.exports = new Command({
   flags: [{
     alias: ['type'],
     usage: 'mix',
-    description: '`UT` (default), `DR`, `mix` (both), `Shiny`, `Super`, `Final`',
+    description: '`UT` (default), `DR`, `UTY`, `mix` (all), `Shiny`, `Super`, `Final`',
   }],
   handler: limiter,
   disabled,
