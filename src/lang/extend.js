@@ -119,11 +119,11 @@ module.exports = (banana, translate) => {
     const { args } = parse(nodes);
     if (simple) return args.join('/');
     return ['cost', 'attack', 'health']
-      .splice(3 - args.length)
+      .slice(Math.max(0, 3 - nodes.length))
       .map((clazz, i) => args[i].replace(/\d+/, `<span class="${clazz}">$&</span>`))
       .join('/');
   };
-  
+
   const { emitter } = banana.parser;
   Object.keys(obj).forEach(key => {
     const val = obj[key];
