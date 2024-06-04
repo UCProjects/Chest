@@ -5,7 +5,7 @@ const login = require('./util/login');
 const day = 24 * 60 * 1000;
 let next = Date.now();
 
-const artifacts = new Map([['', {}]]);
+const artifacts = new Map([[0, {}]]);
 
 function set(artifact) {
   artifacts.set(artifact.id, artifact);

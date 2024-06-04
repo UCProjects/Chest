@@ -1,14 +1,16 @@
 const Command = require('chat-commands/src/command');
-const { find: findSoul, souls, colors } = require('../souls');
-const { artifacts, fetch: loadArtifacts } = require('../artifacts');
-const { load: loadCards, all: allCards, getSync } = require('../cache');
+const parseFlags = require('chat-commands/src/flags');
+const { find: findSoul, souls: SOULS, colors } = require('../souls');
+const { artifacts: allArtifacts, fetch: loadArtifacts } = require('../artifacts');
+const { load: loadCards, all: allCards, getSync, card } = require('../cache');
 const { translate } = require('../lang');
 const { normalMode } = require('../lang/extend');
 const { deck: image } = require('../image');
 const disabled = require('../disabled');
-const parseFlags = require('chat-commands/src/flags');
 const random = require('../util/random');
 const array = require('../util/array');
+
+const REGEX = /(?:[A-Za-z0-9+/]{4}){10,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?/g;
 
 // Generate a deck (25 cards), for X soul, with min of Y spells, using rarity constraints
 const limits = {
@@ -20,15 +22,17 @@ const limits = {
   DETERMINATION: 1,
 };
 
-function handler(msg, args = [], flags = {}) {
+function handler(msg, [arg] = [], flags = {}) {
   return Promise.all([loadCards(), loadArtifacts()])
-    .then(async () => {
-      const soul = getSoul(args[0]);
-      if (!soul) throw `* Soul \`${args[0]}\` not found`;
-      
+    .then(() => {
       normalMode();
+      if (REGEX.test(arg)) return handleDeckCode(arg);
+
+      const soul = getSoul(arg);
+      if (!soul) throw `* Soul \`${arg}\` not found`;
+
       const data = {
-        soul: { 
+        soul: {
           id: soul,
           name: translate(`soul-${soul.toLowerCase()}`),
         },
@@ -41,22 +45,59 @@ function handler(msg, args = [], flags = {}) {
         }),
         artifacts: getArtifacts(array(this.flag('artifact', flags))),
       };
-
-      return {
-        embed: {
-          title: `${data.soul.name} Deck`,
-          description: deckCode(data),
-          color: colors[soul],
-          image: {
-            url: 'attachment://deck.png',
-          },
-        },
-        file: {
-          name: 'deck.png',
-          file: await image(data),
-        },
-      };
+      return getEmbed(data);
     });
+}
+
+function handleDeckCode(code) {
+  const { artifacts, cards, soul } = validate(code);
+  if (!artifacts) throw 'Invalid deck code';
+
+  const data = {
+    soul: {
+      id: soul,
+      name: translate(`soul-${soul.toLowerCase()}`),
+    },
+    cards,
+    artifacts,
+  };
+  return getEmbed(data, code);
+}
+
+async function getEmbed(data, code = deckCode(data)) {
+  return {
+    embed: {
+      title: `${data.soul.name} Deck`,
+      description: code,
+      color: colors[data.soul.id],
+      image: {
+        url: 'attachment://deck.png',
+      },
+    },
+    file: {
+      name: 'deck.png',
+      file: await image(data),
+    },
+  };
+}
+
+function validate(code) {
+  try {
+    const { artifactIds, cardIds, soul } = JSON.parse(Buffer.from(code, 'base64'));
+
+    if (!SOULS.includes(soul)) throw code;
+
+    const artifacts = artifactIds.map((id) => allArtifacts.get(Number(id))).filter(_ => _);
+    const count = artifacts.some((art) => art.legendary) ? 1 : 2;
+    if (artifacts.length !== count) throw code;
+
+    const cards = cardIds.map((id) => card(Number(id))).filter(_ => _);
+    if (cards.length !== 25) throw code;
+
+    return { artifacts, cards, soul };
+  } catch {
+    return {};
+  }
 }
 
 function getMultiFlags(msg, flag) {
@@ -73,8 +114,8 @@ module.exports = new Command({
   title: '',
   alias: ['deck', 'generate', 'gen'],
   examples: [],
-  usage: '[soul]',
-  description: 'Generates a deck for optional soul',
+  usage: '[soul | code]',
+  description: 'Generates a deck for optional soul, or loads deck for given code.',
   flags: [{
     alias: ['ranked'],
     usage: '',
@@ -102,13 +143,13 @@ module.exports = new Command({
 });
 
 function getSoul(input) {
-  if (!input) return random(souls);
+  if (!input) return random(SOULS);
   return findSoul(input);
 }
 
 function getArtifacts(prefer = []) {
   const ret = [];
-  const arts = [...artifacts.values()].filter(a => !a.unavailable);
+  const arts = [...allArtifacts.values()].filter(a => !a.unavailable);
   // Translate name
   arts.forEach(a => a.name = translate(`artifact-name-${a.id}`));
   let art = getArtifact(arts, prefer) || random(arts);
@@ -139,9 +180,9 @@ function generateDeck(soul, {
   singleton = false,
 }) {
   const cards = allCards()
-    .filter((card, _, array) => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul) && // Not token, no soul requirement, or matches soul
-      (!blacklist.length || !blacklist.some(n => n.toUpperCase() === card.rarity)) &&
-      (!exclude.length || !exclude.includes(card)));
+    .filter((card) => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul) && // Not token, no soul requirement, or matches soul
+      !blacklist.some(n => n.toUpperCase() === card.rarity) &&
+      !exclude.includes(card));
 
   const counts = new Map();
   let dtFlag = false;
