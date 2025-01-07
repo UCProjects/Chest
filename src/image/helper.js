@@ -38,6 +38,7 @@ module.exports = function buildStatus(card) {
   if (card.shockEnabled) stats.push('shock');
   if (card.supportEnabled) stats.push('support');
   if (card.bullseyeEnabled) stats.push('bullseye');
+  if (card.wanted) stats.push('wanted');
   if (card.creatorInfo || card.creatorFixedId) stats.push('created');
 
   stats.reverse(); // Order them "properly"
