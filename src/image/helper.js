@@ -18,7 +18,7 @@ module.exports = function buildStatus(card) {
   if (card.attack > card.originalAttack) stats.push('bonusAtk');
   else if (card.attack < card.originalAttack) stats.push('malusAtk');
   if (card.maxHp > card.originalHp) stats.push('bonusHp');
-  // else minusHp
+  else if (card.maxHp < card.originalHp) stats.push('malusHp');
   if (card.paralyzed) stats.push('paralyzed');
   if (card.candy) stats.push('candy');
   if (card.kr) stats.push('poison');
@@ -39,6 +39,7 @@ module.exports = function buildStatus(card) {
   if (card.supportEnabled) stats.push('support');
   if (card.bullseyeEnabled) stats.push('bullseye');
   if (card.wanted) stats.push('wanted');
+  if (card.fixedId === 874) stats.push("underevent2024");
   if (card.creatorInfo || card.creatorFixedId) stats.push('created');
 
   stats.reverse(); // Order them "properly"
