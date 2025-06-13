@@ -17,6 +17,10 @@ function handler(msg, args = [], flags = {}) {
       card.description = translate(`card-${card.id}`).replace(/__|\*\*/g, '');
     });
 
+    if (args.length) {
+      return 'Did you mean to search for `--text` or `--name`?\n* Use `--help` for more details.';
+    }
+
     const ids = this.flag('id', flags);
     const names = this.flag('name', flags);
     const costs = this.flag('cost', flags);
