@@ -31,7 +31,9 @@ exports.load = () => {
       next = Date.now() + hour;
       Object.entries(data).forEach(([key, value]) => {
         if (!value.includes('<')) return;
-        data[key] = value.replace(/\</g, '&lt;');
+        data[key] = value
+          .replaceAll('<br>', '\n')
+          .replaceAll('<', '&lt;');
       });
       setTimeout(() => events.emit('load', { ...data }));
       config.set('lang.en', data);
