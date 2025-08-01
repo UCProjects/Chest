@@ -123,6 +123,11 @@ module.exports = (banana, translate) => {
       .map((clazz, i) => args[i].replace(/\d+/, `<span class="${clazz}">$&</span>`))
       .join('/');
   };
+  obj.image = (nodes) => {
+    const { args: [img, name, width = 64, height = 16, card = 0] } = parse(nodes);
+    // const mouseOver = card ? `onmouseover="displayCardHelp(this, ${card});" onmouseleave="removeCardHover();" ` : '';
+    return `<div><img style="width: ${width}px; height: ${height}px;" class="inserted-img" src="/images/inserted/${img}.png" alt="${name}"/></div>`;
+  };
 
   const { emitter } = banana.parser;
   Object.keys(obj).forEach(key => {
