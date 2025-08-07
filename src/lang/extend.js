@@ -97,12 +97,18 @@ module.exports = (banana, translate) => {
     const text = override || translate(getKey('rarity', rarity));
     return getText(text, rarity);
   };
+  const grade = ['-', '', '+'];
   obj.division = (nodes) => {
     const {args: [division, short], empty} = parse(nodes);
     if (empty) return '';
-    const [rank = '', number = ''] = division.split('_');
-    const title = translate(getKey('division', rank));
-    return short ? title.substring(0, 1) : `${title} ${number}`;
+    if (division.includes('_')) {
+      const [rank = '', number = ''] = division.split('_');
+      const title = translate(getKey('division', rank));
+      return short ? title.substring(0, 1) : `${title} ${number}`;
+    }
+    if (division === 'T') return rank;
+    const title = translate(getKey('division', division.substring(0, 1)))
+    return short ? title.substring(0, 1) : `${title}${grade[division.length - 1]}`;
   };
   obj.cosmetic = (nodes) => {
     const {args: [cosmetic, name], empty} = parse(nodes);
