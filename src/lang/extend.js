@@ -106,8 +106,8 @@ module.exports = (banana, translate) => {
       const title = translate(getKey('division', rank));
       return short ? title.substring(0, 1) : `${title} ${number}`;
     }
-    if (division === 'T') return rank;
-    const title = translate(getKey('division', division.substring(0, 1)))
+    if (division === 'T') return division;
+    const title = translate(getKey('division', division.substring(0, 1)));
     return short ? title.substring(0, 1) : `${title}${grade[division.length - 1]}`;
   };
   obj.cosmetic = (nodes) => {
