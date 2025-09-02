@@ -132,6 +132,7 @@ module.exports = (banana, translate) => {
   obj.image = (nodes) => {
     const { args: [img, name, width = 64, height = 16, card = 0] } = parse(nodes);
     // const mouseOver = card ? `onmouseover="displayCardHelp(this, ${card});" onmouseleave="removeCardHover();" ` : '';
+    if (simple) return getText(name);
     return `<div><img style="width: ${width}px; height: ${height}px;" class="inserted-img" src="https://undercards.net/images/inserted/${img}.png" alt="${name}"/></div>`;
   };
 
