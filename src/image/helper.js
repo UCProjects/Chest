@@ -40,6 +40,13 @@ module.exports = function buildStatus(card) {
   if (card.bullseyeEnabled) stats.push('bullseye');
   if (card.wanted) stats.push('wanted');
   if (card.fixedId === 874) stats.push("underevent2024");
+
+  card.statuses?.forEach(({
+    name = '',
+    displayCounter = false,
+    counter = 0,
+  }) => stats.push(displayCounter ? text(name, counter) : name));
+
   if (card.creatorInfo || card.creatorFixedId) stats.push('created');
 
   stats.reverse(); // Order them "properly"
