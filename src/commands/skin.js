@@ -13,10 +13,17 @@ function handler(msg, args = [], flags = {}) {
   }).then((error) => {
     if (error) return error;
 
+    const cost = this.flag('cost', flags);
+    const available = this.flag('available', flags);
+    const unavailable = this.flag('unavailable', flags);
+
     const filter = (skin) => {
-      if (this.flag('available', flags)) {
+      if (cost && skin.ucpCost !== cost) {
+        return false;
+      }
+      if (available) {
         return !skin.unavailable;
-      } else if (this.flag('unavailable', flags)) {
+      } else if (unavailable) {
         return skin.unavailable;
       }
       return true;
@@ -128,6 +135,9 @@ module.exports = new Command({
     alias: ['available'],
   }, {
     alias: ['unavailable', 'na'],
+  }, {
+    alias: ['cost', 'ucp'],
+    description: 'Of cost `x`',
   }],
   disabled: (msg) => !process.env.UC_LOGIN || disabled(msg),
   handler,
