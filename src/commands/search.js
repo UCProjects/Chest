@@ -107,7 +107,7 @@ module.exports = new Command({
     converter,
   }, {
     alias: ['type', 'extension', 'family'],
-    description: 'Search card type. (base, deltarune)',
+    description: 'Search card type. (base, deltarune, uty)',
     converter,
   }, {
     alias: ['soul', 'class'],
