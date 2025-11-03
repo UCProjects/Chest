@@ -138,6 +138,7 @@ module.exports = new Command({
   }, {
     alias: ['cost', 'ucp'],
     description: 'Of cost `x`',
+    converter: (data) => Number(data),
   }],
   disabled: (msg) => !process.env.UC_LOGIN || disabled(msg),
   handler,
