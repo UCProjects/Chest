@@ -6,6 +6,7 @@ const { translate } = require('../lang');
 const undercards = require('../undercards');
 const paginator = require('../util/pagination');
 const arrayChunk = require('../util/arrayChunk');
+const login = require('../util/login');
 
 const config = new Configstore('robot-98');
 
@@ -27,7 +28,11 @@ const userdata = {
 
 function handler(msg, args = [], flags = {}) {
   const needle = args.join('').toLowerCase();
-  return undercards.get('/Leaderboard', { params: { action: 'ranked' } })
+  return login(process.env.UC_LOGIN)
+    .then(Cookie => undercards.get('/Leaderboard', {
+      headers: { Cookie },
+      params: { action: 'ranked' },
+    }))
     .then(({ data }) => JSON.parse(data.leaderboard))
     .then((leaderboard) => {
       leaderboard.forEach((e, i) => e.rank = i); // Set rank
