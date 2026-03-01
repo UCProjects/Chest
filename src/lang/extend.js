@@ -22,128 +22,129 @@ function getText(text, classes, data = {}) {
   return `<span class="${classes}"${Object.keys(data).map((key) => ` data-${key}="${data[key]}"`).join('')}>${text}</span>`;
 }
 
+const grade = ['-', '', '+'];
+
 module.exports = (banana, translate) => {
-  const obj = {};
-  obj.ucp = ([ucp]) => simple ? ucp : getText(ucp, 'ucp');
-  obj.tribe = (nodes) => {
-    const {args, override, empty} = parse(nodes);
-    if (empty) return '';
-    const text = override || translate(getKey('tribe', args[0]), args[1] || 1);
-    return getText(text, 'underlined');
-  };
-  obj.soul = (nodes) => {
-    const {args, override, empty} = parse(nodes);
-    if (empty) return '';
-    const text = override || translate(getKey('soul', args[0].replace(/_/g, '-')));
-    return getText(text, args[0]);
-  };
-  obj.kw = (nodes) => {
-    const {args, override, empty} = parse(nodes);
-    if (empty) return '';
-    const text = override || translate(getKey('kw', args[0]));
-    return getText(text, 'underlined');
-  };
-  obj.artifact = (nodes) => {
-    const {args, override, empty} = parse(nodes);
-    if (empty) return '';
-    const text = override || translate(getKey('artifact-name', args[0]));
-    return getText(text, 'underlined');
-  };
-  obj.enchant = (nodes) => {
-    const {args: [keyword, quantity = 1], override, empty} = parse(nodes);
-    const text = override || translate(getKey('enchant', keyword), Number(quantity));
-    return getText(text, 'underlined');
-  };
-  obj.hp = (nodes) => {
-    const {args: [number], override} = parse(nodes);
-    const text = override || translate('stat-hp', number || 1);
-    return `${number ? `${number} ` : ''}${getText(text, 'green')}`;
-  };
-  obj.atk = (nodes) => {
-    const {args: [number], override} = parse(nodes);
-    const text = override || translate('stat-atk', number || 1);
-    return `${number ? `${number} ` : ''}${getText(text, 'red')}`;
-  };
-  obj.gold = (nodes) => {
-    const {args: [number], override} = parse(nodes);
-    const text = override || translate('stat-gold', number || 1);
-    return `${number ? `${number} ` : ''}${getText(text, 'yellow')}`;
-  };
-  obj.cost = (nodes) => {
-    const {args: [number], override} = parse(nodes);
-    const text = override || translate('stat-cost', number || 1);
-    return `${number ? `${number} ` : ''}${getText(text, 'blue')}`;
-  };
-  obj.kr = (nodes) => {
-    const {override} = parse(nodes);
-    const text = override || translate('stat-kr');
-    return getText(text, 'PERSEVERANCE');
-  };
-  obj.dmg = (nodes) => {
-    const {args, override} = parse(nodes);
-    const [number] = args;
-    const text = override || translate('stat-dmg', number || 1);
-    return `${number ? `${number} ` : ''}${getText(text, 'JUSTICE')}`;
-  };
-  obj.card = (nodes) => {
-    const {args: [idCard, quantity], override, empty} = parse(nodes);
-    if (empty) return '';
-    const text = override || translate(`card-name-${idCard}`, quantity || 1);
-    return getText(text, 'PATIENCE', { card: idCard });
-  };
-  obj.mode = (nodes) => {
-    const {args, empty} = parse(nodes);
-    if (empty) return '';
-    return translate(getKey('game-type', args[0]));
-  };
-  obj.rarity = (nodes) => {
-    const {args: [rarity], override, empty} = parse(nodes);
-    if (empty) return '';
-    const text = override || translate(getKey('rarity', rarity));
-    return getText(text, rarity);
-  };
-  const grade = ['-', '', '+'];
-  obj.division = (nodes) => {
-    const {args: [division, short], empty} = parse(nodes);
-    if (empty) return '';
-    if (division.includes('_')) {
-      const [rank = '', number = ''] = division.split('_');
-      const title = translate(getKey('division', rank));
-      return short ? title.substring(0, 1) : `${title} ${number}`;
-    }
-    if (division === 'T') return division;
-    const title = translate(getKey('division', division.substring(0, 1)));
-    return short ? title.substring(0, 1) : `${title}${grade[division.length - 1]}`;
-  };
-  obj.cosmetic = (nodes) => {
-    const {args: [cosmetic, name], empty} = parse(nodes);
-    if (empty || !name) return '';
-    return `${translate(getKey('reward', cosmetic))} - ${name}`;
-  };
-  obj.style = (nodes) => {
-    const {args: [clazz, text]} = parse(nodes);
-    return getText(text, clazz);
-  };
-  obj.switch_left = (nodes) => switchHandler(nodes, 'left');
-  obj.switch_right = (nodes) => switchHandler(nodes, 'right');
-  obj.stats = (nodes) => {
-    const { args } = parse(nodes);
-    if (simple) return args.join('/');
-    return ['cost', 'attack', 'health']
-      .slice(Math.max(0, 3 - nodes.length))
-      .map((clazz, i) => args[i].replace(/\d+/, `<span class="${clazz}">$&</span>`))
-      .join('/');
-  };
-  obj.image = (nodes) => {
-    const { args: [img, name, width = 64, height = 16, card = 0] } = parse(nodes);
-    // const mouseOver = card ? `onmouseover="displayCardHelp(this, ${card});" onmouseleave="removeCardHover();" ` : '';
-    if (simple) return getText(name);
-    return `<div><img style="width: ${width}px; height: ${height}px;" class="inserted-img" src="https://undercards.net/images/inserted/${img}.png" alt="${name}"/></div>`;
+  const obj = {
+    ucp: ([ucp = '']) => simple ? ucp : getText(ucp, 'ucp'),
+    tribe(nodes) {
+      const {args: [key, count = 1], override, empty} = parse(nodes);
+      if (empty) return '';
+      const text = override || translate(getKey('tribe', key), count);
+      return getText(text, 'underlined');
+    },
+    soul(nodes) {
+      const {args: [key], override, empty} = parse(nodes);
+      if (empty) return '';
+      const text = override || translate(getKey('soul', key));
+      return getText(text, key);
+    },
+    kw(nodes) {
+      const {args: [key], override, empty} = parse(nodes);
+      if (empty) return '';
+      const text = override || translate(getKey('kw', key));
+      return getText(text, 'underlined');
+    },
+    artifact(nodes) {
+      const {args: [key], override, empty} = parse(nodes);
+      if (empty) return '';
+      const text = override || translate(getKey('artifact-name', key));
+      return getText(text, 'underlined');
+    },
+    enchant(nodes) {
+      const {args: [keyword, quantity = 1], override, empty} = parse(nodes);
+      const text = override || translate(getKey('enchant', keyword), Number(quantity));
+      return getText(text, 'underlined');
+    },
+    hp(nodes) {
+      const {args: [number], override} = parse(nodes);
+      const text = override || translate('stat-hp', number || 1);
+      return `${number ? `${number} ` : ''}${getText(text, 'green')}`;
+    },
+    atk(nodes) {
+      const {args: [number], override} = parse(nodes);
+      const text = override || translate('stat-atk', number || 1);
+      return `${number ? `${number} ` : ''}${getText(text, 'red')}`;
+    },
+    gold(nodes) {
+      const {args: [number], override} = parse(nodes);
+      const text = override || translate('stat-gold', number || 1);
+      return `${number ? `${number} ` : ''}${getText(text, 'yellow')}`;
+    },
+    cost(nodes) {
+      const {args: [number], override} = parse(nodes);
+      const text = override || translate('stat-cost', number || 1);
+      return `${number ? `${number} ` : ''}${getText(text, 'blue')}`;
+    },
+    kr(nodes) {
+      const {override} = parse(nodes);
+      const text = override || translate('stat-kr');
+      return getText(text, 'PERSEVERANCE');
+    },
+    dmg(nodes) {
+      const {args, override} = parse(nodes);
+      const [number] = args;
+      const text = override || translate('stat-dmg', number || 1);
+      return `${number ? `${number} ` : ''}${getText(text, 'JUSTICE')}`;
+    },
+    card(nodes) {
+      const {args: [idCard, quantity], override, empty} = parse(nodes);
+      if (empty) return '';
+      const text = override || translate(`card-name-${idCard}`, quantity || 1);
+      return getText(text, 'PATIENCE', { card: idCard });
+    },
+    mode(nodes) {
+      const {args: [key], empty} = parse(nodes);
+      if (empty) return '';
+      return translate(getKey('game-type', key));
+    },
+    rarity(nodes) {
+      const {args: [rarity], override, empty} = parse(nodes);
+      if (empty) return '';
+      const text = override || translate(getKey('rarity', rarity));
+      return getText(text, rarity);
+    },
+    division(nodes) {
+      const {args: [division, short], empty} = parse(nodes);
+      if (empty) return '';
+      if (division.includes('_')) {
+        const [rank = '', number = ''] = division.split('_');
+        const title = translate(getKey('division', rank));
+        return short ? title.substring(0, 1) : `${title} ${number}`;
+      }
+      if (division === 'T') return division;
+      const title = translate(getKey('division', division.substring(0, 1)));
+      return short ? title.substring(0, 1) : `${title}${grade[division.length - 1]}`;
+    },
+    cosmetic(nodes) {
+      const {args: [cosmetic, name], empty} = parse(nodes);
+      if (empty || !name) return '';
+      return `${translate(getKey('reward', cosmetic))} - ${name}`;
+    },
+    style(nodes) {
+      const {args: [clazz, text]} = parse(nodes);
+      return getText(text, clazz);
+    },
+    switch_left: (nodes) => switchHandler(nodes, 'left'),
+    switch_right: (nodes) => switchHandler(nodes, 'right'),
+    stats(nodes) {
+      const { args } = parse(nodes);
+      if (simple) return args.join('/');
+      return ['cost', 'attack', 'health']
+        .slice(Math.max(0, 3 - nodes.length))
+        .map((clazz, i) => args[i].replace(/\d+/, `<span class="${clazz}">$&</span>`))
+        .join('/');
+    },
+    image(nodes) {
+      const { args: [img, name, width = 64, height = 16, card = 0] } = parse(nodes);
+      // const mouseOver = card ? `onmouseover="displayCardHelp(this, ${card});" onmouseleave="removeCardHover();" ` : '';
+      if (simple) return getText(name);
+      return `<div><img style="width: ${width}px; height: ${height}px;" class="inserted-img" src="https://undercards.net/images/inserted/${img}.png" alt="${name}"/></div>`;
+    },
   };
 
   const { emitter } = banana.parser;
-  Object.keys(obj).forEach(key => {
-    const val = obj[key];
+  Object.entries(obj).forEach(([key, val]) => {
     if (typeof val !== 'function') return;
     emitter[key] = val;
   });
