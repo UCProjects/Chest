@@ -49,6 +49,11 @@ module.exports = (banana, translate) => {
     const text = override || translate(getKey('artifact-name', args[0]));
     return getText(text, 'underlined');
   };
+  obj.enchant = (nodes) => {
+    const {args: [keyword, quantity = 1], override, empty} = parse(nodes);
+    const text = override || translate(getKey('enchant', keyword), Number(quantity));
+    return getText(text, 'underlined');
+  };
   obj.hp = (nodes) => {
     const {args: [number], override} = parse(nodes);
     const text = override || translate('stat-hp', number || 1);
