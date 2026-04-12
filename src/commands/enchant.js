@@ -6,14 +6,13 @@ const paginator = require('../util/pagination');
 const arrayChunk = require('../util/arrayChunk');
 
 const cache = new Map();
-const prefix = 'kw-';
-const enchant = 'enchant-';
+const prefix = 'enchant-';
 
 events.on('load', (data) => {
   cache.clear();
   simpleMode();
   Object.keys(data).forEach((key) => {
-    if (!key.startsWith(enchant) || key.endsWith('-desc')) return;
+    if (!key.startsWith(prefix) || key.endsWith('-desc')) return;
     cache.set(key, {
       name: translate(key, 1),
       description: translate(`${key}-desc`),
