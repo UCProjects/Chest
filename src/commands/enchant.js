@@ -13,10 +13,13 @@ events.on('load', (data) => {
   simpleMode();
   Object.keys(data).forEach((key) => {
     if (!key.startsWith(prefix) || key.endsWith('-desc')) return;
-    cache.set(key, {
+    const entry = {
       name: translate(key, 1),
       description: translate(`${key}-desc`),
-    });
+    };
+    cache.set(key, entry);
+    if (key.endsWith('s')) return;
+    cache.set(`${key}s`, entry);
   });
 });
 
