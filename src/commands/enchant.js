@@ -25,7 +25,7 @@ events.on('load', (data) => {
 
 function handler(msg, args = [], flags = {}) {
   const needle = args.join('-').toLowerCase();
-  if (!needle) return paginator(msg, arrayChunk([...cache.values()].map(({ name }) => name), 20), {
+  if (!needle) return paginator(msg, arrayChunk([...new Set(cache.values())].map(({ name }) => name), 20), {
     renderer(keys, page, total) {
       return {
         embed: {
