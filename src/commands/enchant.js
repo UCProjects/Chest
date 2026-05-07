@@ -47,7 +47,7 @@ function handler(msg, args = [], flags = {}) {
 
 module.exports = new Command({
   title: '',
-  alias: ['enchant', 'enchantment'],
+  alias: ['enchant', 'enchantment', 'e'],
   examples: [],
   usage: '[enchant]',
   description: 'Get the description of an enchantment',
