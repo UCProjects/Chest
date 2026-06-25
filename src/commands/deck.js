@@ -205,7 +205,7 @@ function generateDeck(soul, {
 
   include.some((needle) => {
     const card = getSync(needle);
-    if (card && card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul)) addCard(card);
+    if (card && rarities.includes(card.rarity) && (!card.soul || card.soul.name === soul)) addCard(card);
     return deck.length === limit;
   });
 
