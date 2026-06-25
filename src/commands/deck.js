@@ -9,6 +9,7 @@ const { deck: image } = require('../image');
 const disabled = require('../disabled');
 const random = require('../util/random');
 const array = require('../util/array');
+const { extended: rarities } = require('../util/rarities');
 
 const REGEX = /(?:[A-Za-z0-9+/]{4}){10,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?/g;
 
@@ -180,7 +181,7 @@ function generateDeck(soul, {
   singleton = false,
 }) {
   const cards = allCards()
-    .filter((card) => card.rarity !== 'TOKEN' && (!card.soul || card.soul.name === soul) && // Not token, no soul requirement, or matches soul
+    .filter((card) => rarities.includes(card.rarity) && (!card.soul || card.soul.name === soul) && // Ownable Rarity, no soul requirement, or matches soul
       !blacklist.some(n => n.toUpperCase() === card.rarity) &&
       !exclude.includes(card));
 

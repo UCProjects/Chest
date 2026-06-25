@@ -1,5 +1,6 @@
 exports.generic = ['COMMON', 'RARE', 'EPIC', 'LEGENDARY', 'DETERMINATION'];
-exports.full = ['BASE', ...exports.generic, 'TOKEN'];
+exports.extended = ['BASE', ...exports.generic];
+exports.full = [...exports.extended, 'TOKEN', 'STORY'];
 
 exports.colors = {
   DETERMINATION: 16711680,
