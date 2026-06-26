@@ -181,7 +181,7 @@ function generateDeck(soul, {
   singleton = false,
 }) {
   const cards = allCards()
-    .filter((card) => rarities.includes(card.rarity) && (!card.soul || card.soul.name === soul) && // Ownable Rarity, no soul requirement, or matches soul
+    .filter((card) => valid(card, soul) &&
       !blacklist.some(n => n.toUpperCase() === card.rarity) &&
       !exclude.includes(card));
 
@@ -205,7 +205,7 @@ function generateDeck(soul, {
 
   include.some((needle) => {
     const card = getSync(needle);
-    if (card && rarities.includes(card.rarity) && (!card.soul || card.soul.name === soul)) addCard(card);
+    if (card && valid(card, soul)) addCard(card);
     return deck.length === limit;
   });
 
@@ -222,6 +222,11 @@ function generateDeck(soul, {
   deck.sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name));
 
   return deck;
+}
+
+/** Ownable Rarity, no soul requirement, or matches soul */
+function valid(card, soul) {
+  return rarities.includes(card.rarity) && (!card.soul || card.soul.name === soul);
 }
 
 function deckCode(data) {
