@@ -108,7 +108,7 @@ module.exports = (banana, translate) => {
       if (division.includes('_')) {
         const index = division.lastIndexOf('_');
         const rank = division.substring(0, index);
-        const number = division(index + 1);
+        const number = division.substring(index + 1);
         const title = translate(getKey('division', rank));
         return short === 'short' ? title.substring(0, 1) : `${title} ${number}`;
       }
