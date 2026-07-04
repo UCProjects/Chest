@@ -105,7 +105,7 @@ module.exports = (banana, translate) => {
     division(nodes) {
       const {args: [division, short], empty} = parse(nodes);
       if (empty) return '';
-      if (division.includes('_')) {
+      if (division.includes('_I')) {
         const index = division.lastIndexOf('_');
         const rank = division.substring(0, index);
         const number = division.substring(index + 1);
