@@ -22,8 +22,6 @@ function getText(text, classes, data = {}) {
   return `<span class="${classes}"${Object.keys(data).map((key) => ` data-${key}="${data[key]}"`).join('')}>${text}</span>`;
 }
 
-const grade = ['-', '', '+'];
-
 module.exports = (banana, translate) => {
   const obj = {
     ucp: ([ucp = '']) => simple ? ucp : getText(ucp, 'ucp'),
@@ -115,8 +113,8 @@ module.exports = (banana, translate) => {
         return short === 'short' ? title.substring(0, 1) : `${title} ${number}`;
       }
       if (division === 'T') return division;
-      const title = translate(getKey('division', division.substring(0, 1)));
-      return short ? title.substring(0, 1) : `${title}${grade[division.length - 1]}`;
+      const title = translate(getKey('division', division));
+      return short ? title.substring(0, 1) : title;
     },
     cosmetic(nodes) {
       const {args: [cosmetic, name], empty} = parse(nodes);
