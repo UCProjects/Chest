@@ -25,7 +25,7 @@ function fetch() {
       next = Date.now() + day;
 
       const artifactData = JSON.parse(data.allArtifacts);
-      artifactData.forEach(artifact => artifacts.set(artifact.id, artifact));
+      artifactData.forEach(set);
       config.set('artifacts', artifactData);
     });
 }

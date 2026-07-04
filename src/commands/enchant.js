@@ -7,6 +7,12 @@ const arrayChunk = require('../util/arrayChunk');
 
 const cache = new Map();
 const prefix = 'enchant-';
+const aliases = {
+  [`${prefix}gersons-hammer`]: [
+    "gerson's-hammer",
+    'gerson-hammer',
+  ],
+};
 
 events.on('load', (data) => {
   cache.clear();
@@ -18,8 +24,14 @@ events.on('load', (data) => {
       description: translate(`${key}-desc`),
     };
     cache.set(key, entry);
-    if (key.endsWith('s')) return;
-    cache.set(`${key}s`, entry);
+    const matches = aliases[key];
+    if (Array.isArray(matches)) {
+      matches.forEach(alias => {
+        cache.set(`${prefix}${alias}`, entry);
+      });
+    } else if (!key.endsWith('s')) {
+      cache.set(`${key}s`, entry);
+    }
   });
 });
 
