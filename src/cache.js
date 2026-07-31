@@ -57,10 +57,9 @@ function getClosest(needle = '', directory = []) {
   });
   if (card) { // Return a clone and translate some things
     normalMode();
-    const name = translate(`card-name-${card.id}`, 1);
     return {
       ...card,
-      name,
+      name: translate(`card-name-${card.id}`, 1),
       description: translate(`card-${card.id}`),
     };
   }

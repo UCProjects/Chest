@@ -9,7 +9,7 @@ module.exports = `<html>
 <body>
   <div class="card">
     <div class="top row">
-      <div class="name black-bg center-v {{#if soul}}{{soul.name}}{{/if}}">{{name}}</div>
+      <div class="name black-bg center-v {{#if soul}}{{soul.name}}{{/if}}">{{{name}}}</div>
       <div class="cost black-bg center-v center-h">{{cost}}</div>
     </div>
     <div class="image">
