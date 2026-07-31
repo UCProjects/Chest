@@ -49,6 +49,14 @@ module.exports = (banana, translate) => {
       const text = override || translate(getKey('artifact-name', key));
       return getText(text, 'underlined');
     },
+    quest(nodes) {
+      const {args: [key], override, empty} = parse(nodes);
+      if (Number.isFinite(Number(key))) {
+        const text = override || translate(getKey('artifact-name', key));
+        return getText(text, 'underlined');
+      }
+      return '';
+    },
     enchant(nodes) {
       const {args: [keyword, quantity = 1], override, empty} = parse(nodes);
       const text = override || translate(getKey('enchant', keyword), Number(quantity));
@@ -74,16 +82,16 @@ module.exports = (banana, translate) => {
       const text = override || translate('stat-cost', number || 1);
       return `${number ? `${number} ` : ''}${getText(text, 'blue')}`;
     },
-    kr(nodes) {
-      const {override} = parse(nodes);
-      const text = override || translate('stat-kr');
-      return getText(text, 'PERSEVERANCE');
-    },
     dmg(nodes) {
       const {args, override} = parse(nodes);
       const [number] = args;
       const text = override || translate('stat-dmg', number || 1);
       return `${number ? `${number} ` : ''}${getText(text, 'JUSTICE')}`;
+    },
+    kr(nodes) {
+      const {override} = parse(nodes);
+      const text = override || translate('stat-kr');
+      return getText(text, 'PERSEVERANCE');
     },
     card(nodes) {
       const {args: [idCard, quantity], override, empty} = parse(nodes);
