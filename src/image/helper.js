@@ -8,37 +8,15 @@ function text(data, text, path = 'powers') {
 
 module.exports = function buildStatus(card) {
   const stats = [];
-  if (card.cost < card.originalCost) stats.push('bonusCost');
-  else if (card.cost > card.originalCost) stats.push('malusCost');
-  if (card.rarity === 'DETERMINATION') stats.push('determination');
-  if (card.loop) stats.push(text('loop', card.loop));
-  if (card.taunt) stats.push('taunt');
-  if (card.charge) stats.push('charge');
-  if (card.haste) stats.push('haste');
-  if (card.attack > card.originalAttack) stats.push('bonusAtk');
-  else if (card.attack < card.originalAttack) stats.push('malusAtk');
-  if (card.maxHp > card.originalHp) stats.push('bonusHp');
-  else if (card.maxHp < card.originalHp) stats.push('malusHp');
-  if (card.paralyzed) stats.push('paralyzed');
-  if (card.candy) stats.push('candy');
-  if (card.kr) stats.push('poison');
-  if (card.armor === true) stats.push('armor');
-  else if (card.armor) stats.push(text('armor', card.armor));
-  if (card.dodge) stats.push(text('dodge', card.dodge));
-  if (card.burn) stats.push(text('burn', card.burn));
-  if (card.cantAttack) stats.push('cantAttack');
-  if (card.anotherChance) stats.push('anotherChance');
-  if (card.invulnerable) stats.push('invulnerable');
-  if (card.transparency) stats.push('transparency');
-  if (card.silence) stats.push('silenced');
-  if (card.ranged) stats.push('ranged'); // Legacy
-  if (card.thorns) stats.push(text('thorns', card.thorns)); // Legacy
-  if (card.caughtMonster || card.catchedMonster) stats.push('box');
-  if (card.shockEnabled) stats.push('shock');
-  if (card.supportEnabled) stats.push('support');
-  if (card.bullseyeEnabled) stats.push('bullseye');
-  if (card.wanted) stats.push('wanted');
-  if (card.fixedId === 874) stats.push("underevent2024");
+  if (card.cost < card.originalCost) stats.push('BonusCost');
+  else if (card.cost > card.originalCost) stats.push('MalusCost');
+  if (card.rarity === 'DETERMINATION') stats.push('Determination');
+  if (card.attack > card.originalAttack) stats.push('BonusAtk');
+  else if (card.attack < card.originalAttack) stats.push('MalusAtk');
+  if (card.maxHp > card.originalHp) stats.push('BonusHp');
+  else if (card.maxHp < card.originalHp) stats.push('MalusHp');
+  if (card.caughtMonster || card.catchedMonster) stats.push('Box');
+  if (card.fixedId === 874) stats.push('Underevent2024');
 
   card.statuses?.forEach(({
     name = '',
