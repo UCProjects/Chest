@@ -7,6 +7,7 @@ const undercards = require('../undercards');
 const paginator = require('../util/pagination');
 const arrayChunk = require('../util/arrayChunk');
 const login = require('../util/login');
+const { progress } = require('../util/divisions');
 
 const config = new Configstore('robot-98');
 
@@ -22,6 +23,7 @@ const userdata = {
   lossesRanked: 0,
   division: '',
   eloRanked: 0,
+  eloProgress: 0,
   winStreak: 0,
   rank: 0, // Custom value
 };
@@ -122,7 +124,9 @@ function singleResult(entry = userdata) {
     lossesRanked: losses,
     division,
     eloRanked: elo,
+    eloProgress,
   } = entry;
+  const percent = progress(division, eloProgress);
   return {
     embed: {
       author: {
@@ -140,7 +144,7 @@ function singleResult(entry = userdata) {
         inline: true,
       }, {
         name: translate('leaderboard-progress'),
-        value: `${elo}${division !== 'LEGEND' ? ` (${floor((elo % 25) / 25 * 100)}%)` : ''}`,
+        value: `${elo}${percent === undefined ? '' : ` (${floor(percent)}%)`}`,
         inline: true,
       }, {
         name: '------',
