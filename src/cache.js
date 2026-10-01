@@ -9,17 +9,32 @@ const cards = new Map();
 
 const day = 24 * 60 * 1000;
 let next = Date.now();
+let lastVersion;
 
 function set(card) {
   cards.set(card.id, card);
+}
+
+async function getAllCards() {
+  const { data: { url, version } } = await undercards.get('/card-data/latest.json');
+  if (lastVersion === version) return undefined;
+  const temp = lastVersion;
+  lastVersion = version;
+  try {
+    return await undercards.get(url);
+  } catch (e) {
+    console.error(`Failed to retrieve all cards ${url}`, e);
+    lastVersion = temp;
+    return undefined;
+  }
 }
 
 config.get('cards', []).forEach(set);
 
 exports.load = () => {
   if (Date.now() < next) return load();
-  return Promise.all([undercards.get('/AllCards'), load()])
-    .then(([{ data: { cards: newCards } }]) => {
+  return Promise.all([getAllCards(), load()])
+    .then(([{ data: { cards: newCards } } = {}]) => {
       if (newCards) {
         cards.clear(); // Remove old cards
         const data = JSON.parse(newCards);
