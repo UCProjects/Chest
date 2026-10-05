@@ -22,9 +22,10 @@ module.exports = `<html>
     .image { position: relative; height: 88px; }
     .avatar { width: 100%; height: 100%; background-color: var(--bgcolor); }
     .status, .tribes { position: absolute; right: 2px; display: flex; }
-    .status { top: 4px; }
+    .status { top: 4px; max-width: 154px; flex-direction: row-reverse; flex-wrap: wrap; }
     .tribes { bottom: 0px; }
-    .status > img, .tribes > img, .status > span { margin-right: 2px; }
+    .tribes > img { margin-right: 2px; }
+    .status > img, .status > span { margin-left: 2px; }
     .status > span { position: relative; }
     .status img, .tribes img { width: 16px; }
     .description { border-top: 2px solid var(--border); text-align: center; font-size: 0.8rem; padding: 2px 1px; min-height: 80px; }

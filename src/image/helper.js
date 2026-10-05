@@ -26,6 +26,5 @@ module.exports = function buildStatus(card) {
 
   if (card.creatorInfo || card.creatorFixedId) stats.push('created');
 
-  stats.reverse(); // Order them "properly"
   card.status = stats.map((stat = '') => stat.startsWith('<') ? stat : image(stat));
 }
