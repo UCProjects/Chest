@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const Handlebars = require('handlebars');
+const { browserArgs } = require('../proxy');
 
 const TIMEOUT = 30000;
 const MAX_PAGES = 2;
@@ -11,7 +12,7 @@ const waiting = [];
 function launch() {
   const promise = puppeteer.launch({
     headless: true,
-    args: ['--disable-dev-shm-usage'],
+    args: ['--disable-dev-shm-usage', ...browserArgs()],
   });
   const reset = () => {
     if (browserPromise === promise) browserPromise = null;
