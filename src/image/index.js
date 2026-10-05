@@ -1,4 +1,4 @@
-const htmlImage = require('node-html-to-image');
+const render = require('./render');
 const fs = require('fs').promises;
 const path = require('path');
 const card = require('./template');
@@ -9,65 +9,37 @@ const pack = require('./pack');
 // Build a card image (TODO: cache images)
 exports.card = (data) => {
   buildStatus(data);
-  return htmlImage({
-    html: card,
-    content: data,
-    puppeteerArgs: {
-      fullPage: false,
-    },
-    beforeScreenshot(page) {
-      return page.$eval('.card', el => el.offsetHeight)
-        .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
-        .then(() => page.$eval('.name', (el, size = 15, step = 0.5) => {
-          while (el.scrollWidth > el.clientWidth && size-step > 7) {
-            size -= step;
-            el.style.fontSize = `${size}px`;
-          }
-        }))
-        //.then(() => page.$eval('.card', el => el.outerHTML)).then(console.log)
-        .catch(console.error);
-    }
-  })
+  return render(card, data, (page) => page.$eval('.card', el => el.offsetHeight)
+    .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
+    .then(() => page.$eval('.name', (el, size = 15, step = 0.5) => {
+      while (el.scrollWidth > el.clientWidth && size-step > 7) {
+        size -= step;
+        el.style.fontSize = `${size}px`;
+      }
+    }))
+    .catch(console.error))
     //.then((buffer) => cacheImage(buffer, card))
     .catch((e) => console.error('Failed to make card', e));
 };
 exports.deck = (data) => {
-  return htmlImage({
-    html: deck,
-    content: data,
-    puppeteerArgs: {
-      fullPage: false,
-    },
-    beforeScreenshot(page) {
-      return page.$eval('#deck', el => el.offsetHeight)
-        .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
-        .catch(console.error);
-    },
-  })
+  return render(deck, data, (page) => page.$eval('#deck', el => el.offsetHeight)
+    .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
+    .catch(console.error))
     .catch(e => console.error('Failed to make deck', e));
 };
 exports.pack = (cards = []) => {
   cards.forEach(buildStatus)
-  return htmlImage({
-    html: pack,
-    content: { cards },
-    puppeteerArgs: {
-      fullPage: false,
-    },
-    beforeScreenshot(page) {
-      return page.$eval('#pack', el => el.offsetHeight)
-        .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
-        .then(() => page.$$eval('.name', (e = []) => e.forEach((el) => {
-          const step = 0.5;
-          let size = 15;
-          while (el.scrollWidth > el.clientWidth && size-step > 7) {
-            size -= step;
-            el.style.fontSize = `${size}px`;
-          }
-        })))
-        .catch(console.error);
-    },
-  });
+  return render(pack, { cards }, (page) => page.$eval('#pack', el => el.offsetHeight)
+    .then(height => page.$eval('body', (el, height) => el.style.height = height, height))
+    .then(() => page.$$eval('.name', (e = []) => e.forEach((el) => {
+      const step = 0.5;
+      let size = 15;
+      while (el.scrollWidth > el.clientWidth && size-step > 7) {
+        size -= step;
+        el.style.fontSize = `${size}px`;
+      }
+    })))
+    .catch(console.error));
 };
 
 function cacheImage(buffer, card) {
