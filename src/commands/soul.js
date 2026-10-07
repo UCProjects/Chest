@@ -59,7 +59,7 @@ function handler(msg, args = [], flags = {}) {
 
 module.exports = new Command({
   title: '',
-  alias: ['soul', 'class'],
+  alias: ['soul', 'class', 's'],
   examples: [],
   usage: '[soul]',
   description: 'Get description and cards for a soul',
