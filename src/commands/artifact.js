@@ -25,7 +25,10 @@ function handler(msg, args = [], flags = {}) {
       },
     });
     const { id, cost, legendary, image, unavailable } = [...artifacts.values()]
-      .find(({ name }) => name.toLowerCase() === needle) || {};
+      .find(({ id, name }) => [
+        name.toLowerCase(),
+        translate(`artifact-name-${id}`).toLowerCase(),
+      ].includes(needle)) || {};
     if (!id) return `* ${args.join(' ')} not found`;
     const fields = [{
       name: 'Type',
