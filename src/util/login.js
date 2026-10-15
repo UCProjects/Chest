@@ -1,9 +1,10 @@
 const https = require('https');
 const { agent } = require('../proxy');
 
-function login(body) {
+function login(body, config = {}) {
   const hostname = 'undercards.net';
   const options = {
+    ...config,
     hostname: hostname,
     port: 443,
     path: encodeURI('/SignIn'),
@@ -28,7 +29,7 @@ function login(body) {
         reject(res);
       } else resolve(res)
     });
-    //req.on("error", console.error.bind(console));
+    req.on('error', reject);
     if (body) req.write(body);
     req.end();
   }).then(({ headers }) => `${headers['set-cookie'].map(cookie => cookie.split(';')[0]).join('; ')};`);
