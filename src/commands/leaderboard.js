@@ -3,10 +3,9 @@ const Configstore = require('configstore');
 const disabled = require('../disabled');
 const floor = require('../util/floor');
 const { translate } = require('../lang');
-const undercards = require('../undercards');
 const paginator = require('../util/pagination');
 const arrayChunk = require('../util/arrayChunk');
-const login = require('../util/login');
+const rankedLeaderboard = require('../util/rankedLeaderboard');
 const { progress } = require('../util/divisions');
 
 const config = new Configstore('robot-98');
@@ -30,14 +29,8 @@ const userdata = {
 
 function handler(msg, args = [], flags = {}) {
   const needle = args.join('').toLowerCase();
-  return login(process.env.UC_LOGIN)
-    .then(Cookie => undercards.get('/Leaderboard', {
-      headers: { Cookie },
-      params: { action: 'ranked' },
-    }))
-    .then(({ data }) => JSON.parse(data.leaderboard))
+  return rankedLeaderboard()
     .then((leaderboard) => {
-      leaderboard.forEach((e, i) => e.rank = i); // Set rank
       const register = this.flag('register', flags);
       const me = ['me', 'main'].includes(needle);
       if (register || this.flag('unregister', flags)) {
