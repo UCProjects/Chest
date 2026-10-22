@@ -27,6 +27,10 @@ const userdata = {
   rank: 0, // Custom value
 };
 
+function playerUrl(id) {
+  return `https://ucprojects.github.io/Leaderboard/player?id=${id}`;
+}
+
 function handler(msg, args = [], flags = {}) {
   const needle = args.join('').toLowerCase();
   return rankedLeaderboard()
@@ -124,6 +128,7 @@ function singleResult(entry = userdata) {
     embed: {
       author: {
         name: entry.username,
+        url: playerUrl(entry.id),
         icon_url: `https://undercards.net/images/avatars/${entry.avatar.image}.png`,
       },
       description: [
@@ -168,7 +173,7 @@ function multiResult(entries = [], title, msg, page = 1, emptyMessage = '* None'
       if (Array.isArray(data)) return {
         embed: {
           title: `${title || translate('leaderboard-title')} [${page}/${total}]`,
-          description: data.map(entry => `${entry.rank + 1}. ${entry.username} #${entry.id}`).join('\n') || emptyMessage,
+          description: data.map(entry => `${entry.rank + 1}. [${entry.username}](${playerUrl(entry.id)}) #${entry.id}`).join('\n') || emptyMessage,
         },
       };
       else {
